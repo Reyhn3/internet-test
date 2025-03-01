@@ -648,3 +648,6 @@ FodyWeavers.xsd
 # Additional files built by Visual Studio
 
 # End of https://www.toptal.com/developers/gitignore/api/linux,windows,jetbrains,rider,visualstudio,visualstudiocode,git,rust,rust-analyzer
+
+
+.idea
