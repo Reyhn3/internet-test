@@ -2,10 +2,9 @@ use anyhow::Result;
 use chrono::Local;
 use clap::Parser;
 use log::{debug, error, info, log_enabled, trace, warn, Level, LevelFilter};
-use std::fmt::{Debug, Display};
+use std::fmt::Debug;
 use std::io::Write;
 use std::process::ExitCode;
-use std::time::SystemTime;
 
 /// Checks whether there is a working Internet connection.
 #[derive(Parser, Debug)]
@@ -43,7 +42,7 @@ async fn main() -> ExitCode {
         info!("the answer was: {}", x);
     }
 
-    return match url_lookup(quiet).await {
+    return match url_lookup().await {
         Ok(_) => {
             info!("Working Internet connection detected");
             ExitCode::SUCCESS
@@ -55,7 +54,7 @@ async fn main() -> ExitCode {
     };
 }
 
-async fn url_lookup(quiet: bool) -> Result<()> {
+async fn url_lookup() -> Result<()> {
 //TODO: Implement
     // return Err(anyhow::anyhow!("URL lookup failed"));
 
@@ -78,6 +77,7 @@ fn init_logger(quiet: bool, verbose: bool) {
                 let style = buf.default_level_style(record.level());
                 writeln!(buf, "{style}{}{style:#}", record.args())
             })
+            .filter_level(LevelFilter::Info)
             .init();
         return;
     }
