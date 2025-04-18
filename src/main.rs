@@ -1,9 +1,9 @@
+mod logger;
+
 use anyhow::Result;
-use chrono::Local;
 use clap::Parser;
-use log::{debug, error, info, log_enabled, trace, warn, Level, LevelFilter};
+use log::{debug, error, info, log_enabled, trace, warn, Level};
 use std::fmt::Debug;
-use std::io::Write;
 use std::process::ExitCode;
 
 /// Checks whether there is a working Internet connection.
@@ -25,7 +25,7 @@ async fn main() -> ExitCode {
     let quiet = args.quiet;
     let verbose = args.verbose;
 
-    init_logger(quiet, verbose);
+    logger::init(quiet, verbose);
 
 //TODO: Remove
     error!("{}", "Its fleece was white as snow");
@@ -59,46 +59,4 @@ async fn url_lookup() -> Result<()> {
     // return Err(anyhow::anyhow!("URL lookup failed"));
 
     Ok(())
-}
-
-//TODO: Move to another file
-const DATE_FORMAT_STR: &'static str = "%H:%M:%S";
-
-//TODO: Move to another file
-fn init_logger(quiet: bool, verbose: bool) {
-    if quiet {
-        env_logger::builder().filter_level(LevelFilter::Off).init();
-        return;
-    }
-
-    if !verbose {
-        env_logger::builder()
-            .format(|buf, record| {
-                let style = buf.default_level_style(record.level());
-                writeln!(buf, "{style}{}{style:#}", record.args())
-            })
-            .filter_level(LevelFilter::Info)
-            .init();
-        return;
-    }
-
-    env_logger::builder()
-        .format(|buf, record| {
-            let style = buf.default_level_style(record.level());
-            let timestamp = Local::now().format(DATE_FORMAT_STR);
-            let pad = match record.level() {
-                Level::Info | Level::Warn => "  ",
-                _ => " ",
-            };
-
-            writeln!(
-                buf,
-                "{timestamp} [{}]{pad}{style}{}{style:#}",
-                record.level(),
-                record.args()
-            )
-        })
-        .filter_level(LevelFilter::max())
-        .format_target(false)
-        .init();
 }
