@@ -1,5 +1,5 @@
 use chrono::Local;
-use log::{Level, LevelFilter};
+use log::{debug, error, info, log_enabled, trace, warn, Level, LevelFilter};
 use std::io::Write;
 
 const DATE_FORMAT_STR: &'static str = "%H:%M:%S";
@@ -40,4 +40,29 @@ pub fn init(quiet: bool, verbose: bool) {
         .filter_level(LevelFilter::max())
         .format_target(false)
         .init();
+}
+
+//TODO: Remove
+pub fn log_debug(debug: bool) {
+    if !cfg!(debug_assertions) {
+        return;
+    }
+
+    if !debug {
+        return;
+    }
+
+    error!("{}", "Its fleece was white as snow");
+    warn!("{:#?}", "The lamb was sure to go");
+    info!("{:?}", "And every where that Mary went");
+    debug!("Mary has a little lamb");
+    trace!("Mary has a fluffy lamb");
+
+    debug!("this is a debug {}", "message");
+    error!("this is printed by default");
+
+    if log_enabled!(Level::Info) {
+        let x = 3 * 4; // expensive computation
+        info!("the answer was: {}", x);
+    }
 }
