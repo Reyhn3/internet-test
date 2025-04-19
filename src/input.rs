@@ -7,10 +7,16 @@ use anstyle::{AnsiColor, Color, Style};
 #[clap(author, version, about, long_about = None)]
 #[command(styles=get_styles())]
 pub struct Args {
+//TODO: Remove when done developing
     /// Enable debug logs to the terminal.
     #[clap(long, short, action, hide(true))]
     pub(crate) debug: bool,
 
+//TODO: Remove when done developing
+    /// When set, checks will throw errors
+    #[clap(long, short, action, hide(true))]
+    pub(crate) error: bool,
+    
     /// Disable all output to the terminal.
     #[clap(long, short, action)]
     pub(crate) quiet: bool,
