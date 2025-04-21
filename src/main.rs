@@ -6,7 +6,8 @@ use clap::Parser;
 use log::{error, info};
 use std::process::ExitCode;
 
-fn main() -> ExitCode {
+#[tokio::main]
+async fn main() -> ExitCode {
     let args = input::Args::parse();
     let quiet = args.quiet;
     let verbose = args.verbose;
@@ -18,7 +19,7 @@ fn main() -> ExitCode {
     logger::init(quiet, verbose);
     logger::log_debug(debug);
 
-    return match ncsi::run_ncsi(error) {
+    return match ncsi::run_ncsi(error).await {
         Ok(result) => {
             if result == ExitCode::SUCCESS {
                 info!("Working Internet connection detected")
