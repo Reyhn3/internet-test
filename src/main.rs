@@ -12,14 +12,13 @@ async fn main() -> ExitCode {
     let quiet = args.quiet;
     let verbose = args.verbose;
 
-//TODO: Remove these when done developing
-    let debug = args.debug;
-    let error = args.error;
-
     logging::init(quiet, verbose);
+
+//TODO: Remove when done learning
+    let debug = args.debug;
     logging::log_debug(debug);
 
-    match ncsi::run_ncsi(error).await {
+    match ncsi::run_ncsi().await {
         Ok(result) => {
             if result == ExitCode::SUCCESS {
                 info!("Working Internet connection detected")

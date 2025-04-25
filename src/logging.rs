@@ -42,7 +42,7 @@ pub fn init(quiet: bool, verbose: bool) {
         .init();
 }
 
-//TODO: Remove
+//TODO: Remove when done learning
 pub fn log_debug(debug: bool) {
     if !cfg!(debug_assertions) {
         return;

@@ -1,20 +1,7 @@
+use crate::ncsi::{ms, Check};
 use anyhow::bail;
 use log::{debug, trace};
 use reqwest::{StatusCode, Url};
-use crate::ncsi::{ms, Check};
-
-//TODO: Remove when done debugging
-pub(crate) fn url_lookup(succeed: bool, error: bool) -> anyhow::Result<Check> {
-    if error {
-        bail!("Something went bad")
-    }
-
-    if succeed {
-        return Ok(Check::Success);
-    }
-
-    Ok(Check::Failure)
-}
 
 pub(crate) async fn invoke_web_request(url: Url) -> anyhow::Result<Check> {
     trace!("Invoking web request: {}", url);
