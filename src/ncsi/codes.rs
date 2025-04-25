@@ -1,0 +1,1 @@
+pub(crate) const NCSI_OUT_OF_OPTIONS: u8 = 0x02;

@@ -1,4 +1,5 @@
 mod probing;
+mod codes;
 
 use anyhow::{bail, Result};
 use log::{debug, info, trace, warn};
@@ -10,8 +11,6 @@ enum Check {
     Success,
     Failure,
 }
-
-const NCSI_OUT_OF_OPTIONS: u8 = 0x02;
 
 /*
  * This method translates Result objects to an ExitCode.
@@ -33,7 +32,7 @@ pub async fn run_ncsi(error: bool) -> Result<ExitCode> {
         return Ok(ExitCode::SUCCESS);
     }
 
-    Ok(ExitCode::from(NCSI_OUT_OF_OPTIONS))
+    Ok(ExitCode::from(codes::NCSI_OUT_OF_OPTIONS))
 }
 
 async fn active_web_probing() -> Result<Check> {
