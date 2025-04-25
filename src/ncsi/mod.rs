@@ -1,9 +1,12 @@
-mod probing;
 mod codes;
+mod ms;
+mod probing;
 
 use anyhow::{bail, Result};
 use log::{debug, info, trace, warn};
+use reqwest::Url;
 use std::process::ExitCode;
+use crate::ncsi::ms::{MS_DNS_IPV4_HOST, MS_WEB_IPV4_HOST};
 
 #[derive(PartialEq)]
 #[derive(Debug)]
@@ -19,6 +22,15 @@ enum Check {
  */
 pub async fn run_ncsi(error: bool) -> Result<ExitCode> {
 
+    // Step 1: Send a DNS request to resolve the web host.
+    // Step 2: If valid, do a plain HTTP GET.
+    // Step 3: Validate the contents.
+    // Step 4: Send a DNS request to resolve the dns host.
+    // Step 5: Evaluate requests.
+    
+//TODO: Return Internet Access, Limited Connectivity or No Internet Access.
+    
+    
 //TODO: Learn how to simplify these statements
     let web_check = active_web_probing().await?;
     if web_check ==  Check::Success {
@@ -42,9 +54,13 @@ async fn active_web_probing() -> Result<Check> {
     // If either succeeds, return success
 
 //TODO: Get addresses
+    let url_v4_raw = format!("http://{}", MS_WEB_IPV4_HOST);
+    let url_v4_base = Url::parse(url_v4_raw.as_str())?;
+    let url_v4 = url_v4_base.join(ms::MS_WEB_IPV4_PATH)?;
 
 //TODO: Invoke in parallel
-    let ipv4check = probing::invoke_web_request().await?;
+
+    let ipv4check = probing::invoke_web_request(url_v4).await?;
     debug!("Active web probe result is {:?}", ipv4check);
     if ipv4check == Check::Success {
         return Ok(Check::Success);

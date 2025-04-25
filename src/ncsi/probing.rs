@@ -1,7 +1,7 @@
 use anyhow::bail;
 use log::{debug, trace};
 use reqwest::{StatusCode, Url};
-use crate::ncsi::Check;
+use crate::ncsi::{ms, Check};
 
 //TODO: Remove when done debugging
 pub(crate) fn url_lookup(succeed: bool, error: bool) -> anyhow::Result<Check> {
@@ -16,9 +16,7 @@ pub(crate) fn url_lookup(succeed: bool, error: bool) -> anyhow::Result<Check> {
     Ok(Check::Failure)
 }
 
-pub(crate) async fn invoke_web_request() -> anyhow::Result<Check> {
-    const url: &str = "http://www.msftncsi.com/ncsi.txt";
-
+pub(crate) async fn invoke_web_request(url: Url) -> anyhow::Result<Check> {
     trace!("Invoking web request: {}", url);
     let result = reqwest::get(url).await?;
     debug!("Received response {}", result.status());
@@ -34,7 +32,7 @@ pub(crate) async fn invoke_web_request() -> anyhow::Result<Check> {
     }
     trace!("Received content '{}'", content);
 
-    if content != "Microsoft NCSI" {
+    if !content.eq(ms::MS_WEB_IPV4_CONTENT) {
         debug!("NCSI response body not as expected");
         return Ok(Check::Failure);
     }
