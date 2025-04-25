@@ -1,5 +1,5 @@
 mod input;
-mod logger;
+mod logging;
 mod ncsi;
 
 use clap::Parser;
@@ -16,8 +16,8 @@ async fn main() -> ExitCode {
     let debug = args.debug;
     let error = args.error;
 
-    logger::init(quiet, verbose);
-    logger::log_debug(debug);
+    logging::init(quiet, verbose);
+    logging::log_debug(debug);
 
     return match ncsi::run_ncsi(error).await {
         Ok(result) => {
