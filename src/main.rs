@@ -19,7 +19,7 @@ async fn main() -> ExitCode {
     logging::init(quiet, verbose);
     logging::log_debug(debug);
 
-    return match ncsi::run_ncsi(error).await {
+    match ncsi::run_ncsi(error).await {
         Ok(result) => {
             if result == ExitCode::SUCCESS {
                 info!("Working Internet connection detected")
@@ -32,5 +32,5 @@ async fn main() -> ExitCode {
             error!("Error: {}", e);
             ExitCode::FAILURE
         }
-    };
+    }
 }
