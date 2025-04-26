@@ -1,3 +1,5 @@
+use constcat::concat;
+
 /*
  * According to Microsoft,
  * the host and path were changed starting with Windows 10 build 14393 (1607).
@@ -22,7 +24,10 @@ pub(super) const MS_WEB_IPV6_HOST: &str = "ipv6.msftconnecttest.com";
 pub(super) const MS_WEB_IPV4_HOST_W10PRE1607: &str = "www.msftncsi.com";
 pub(super) const MS_WEB_IPV6_HOST_W10PRE1607: &str = "ipv6.msftncsi.com";
 
-pub(super) const MS_WEB_IPV4_PATH: &str = "connecttest.txt";
-pub(super) const MS_WEB_IPV6_PATH: &str = "connecttest.txt";
-pub(super) const MS_WEB_IPV4_PATH_W10PRE1607: &str = "ncsi.txt";
-pub(super) const MS_WEB_IPV6_PATH_W10PRE1607: &str = "ncsi.txt";
+const MS_WEB_IPV4_PATH: &str = "connecttest.txt";
+const MS_WEB_IPV6_PATH: &str = "connecttest.txt";
+const MS_WEB_IPV4_PATH_W10PRE1607: &str = "ncsi.txt";
+const MS_WEB_IPV6_PATH_W10PRE1607: &str = "ncsi.txt";
+
+pub(super) const MS_WEB_IPV4_URL: &str = concat!(
+    "http://", MS_WEB_IPV4_HOST, "/", MS_WEB_IPV4_PATH);
