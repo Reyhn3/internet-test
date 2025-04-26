@@ -29,7 +29,7 @@ pub(crate) async fn invoke_web_request(url: Url) -> anyhow::Result<Check> {
     Ok(Check::Success)
 }
 
-pub(crate) fn resolve_dns(url: &str) -> anyhow::Result<()> {
+pub(crate) fn resolve_dns(url: &str) -> anyhow::Result<IpAddr> {
     trace!("Resolving DNS address: {}", url);
     
     // match url.to_socket_addrs() {
@@ -49,7 +49,7 @@ pub(crate) fn resolve_dns(url: &str) -> anyhow::Result<()> {
         .map(|addr| addr.ip())
         .map(|ip| {
             debug!("DNS address resolved to: {}", ip);
-            Ok(())
+            Ok(ip)
         })
         .ok_or(anyhow!("Failed to resolve DNS address"))
         .unwrap()

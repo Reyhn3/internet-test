@@ -2,7 +2,8 @@ mod codes;
 mod ms;
 mod probing;
 
-use crate::ncsi::ms::{MS_DNS_IPV4_HOST, MS_WEB_IPV4_HOST};
+use std::net::IpAddr;
+use crate::ncsi::ms::{MS_WEB_IPV4_HOST};
 use anyhow::Result;
 use log::{debug, error, info, trace, warn};
 use reqwest::Url;
@@ -34,7 +35,7 @@ pub async fn run_ncsi() -> Result<ExitCode> {
     // Step 5: Evaluate requests.
 
 //TODO: Return Internet Access, Limited Connectivity or No Internet Access.
-    
+
     debug!("Running NCSI for IPv4");
     let status = probe_ipv4().await;
     debug!("NCSI for IPv4 completed with status {:?}", status);
@@ -55,7 +56,7 @@ pub async fn run_ncsi() -> Result<ExitCode> {
     // if dns_check == Check::Success {
     //     return Ok(ExitCode::SUCCESS);
     // }
-    // 
+    //
     // Ok(ExitCode::from(codes::NCSI_OUT_OF_OPTIONS))
 }
 
@@ -91,16 +92,16 @@ fn active_dns_probing() -> Result<Check> {
 
 async fn probe_ipv4() -> Result<NcsiStatus> {
     trace!("DNS resolution of web host started");
-    probing::resolve_dns(MS_WEB_IPV4_HOST).or_else(|e| {
+    probing::resolve_dns(ms::MS_WEB_IPV4_HOST_AND_PORT).or_else(|e| {
         error!("DNS resolution of web host failed: {}", e);
         Err(e)
     })?;
     debug!("DNS resolution of web host succeeded");
-    
+
     trace!("Web request started");
     let get_content = probing::request_web_content(ms::MS_WEB_IPV4_URL).await?;
     debug!("Web request succeeded");
-    
+
     let content_match = match get_content.as_str() {
         MS_WEB_IPV4_CONTENT => {
             debug!("Recieved content matches expected content");
@@ -111,16 +112,26 @@ async fn probe_ipv4() -> Result<NcsiStatus> {
             Err(anyhow::anyhow!("Unexpected content"))
         }
     };
-    
-    trace!("DNS resolution of DNS host started");   
-    probing::resolve_dns(MS_DNS_IPV4_HOST)?;
+
+    trace!("DNS resolution of DNS host started");
+    let dns_ip = probing::resolve_dns(ms::MS_DNS_IPV4_HOST_AND_PORT)
+        .or_else(|e| {
+            error!("DNS resolution of DNS host failed: {}", e);
+            Err(e)       
+        })?;
+    trace!("DNS resolution of DNS host succeeded and found IP {}", dns_ip);
+    if dns_ip.to_string().eq(ms::MS_DNS_IPV4_IP) {
+        debug!("DNS IP matches expected IP");
+    } else {
+        warn!("DNS IP does not match expected IP");
+    }
     debug!("DNS resolution of DNS host succeeded");
-    
+
     if content_match.is_ok() {
         debug!("Internet access detected");
         return Ok(NcsiStatus::InternetAccess);
     }
-    
+
     debug!("Limited connectivity detected");
     Ok(NcsiStatus::LimitedConnectivity)
 }
