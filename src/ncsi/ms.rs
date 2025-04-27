@@ -19,7 +19,7 @@ pub(super) const MS_WEB_IPV4_CONTENT: &str = "Microsoft Connect Test";
 pub(super) const MS_WEB_IPV6_CONTENT: &str = "Microsoft Connect Test";
 pub(super) const MS_WEB_IPV4_CONTENT_W10PRE1607: &str = "Microsoft NCSI";
 
-pub(super) const MS_WEB_IPV4_HOST: &str = "www.msftconnecttest.com";
+const MS_WEB_IPV4_HOST: &str = "www.msftconnecttest.com";
 const MS_WEB_IPV6_HOST: &str = "ipv6.msftconnecttest.com";
 const MS_WEB_IPV4_HOST_W10PRE1607: &str = "www.msftncsi.com";
 const MS_WEB_IPV6_HOST_W10PRE1607: &str = "ipv6.msftncsi.com";
