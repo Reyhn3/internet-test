@@ -1,3 +1,4 @@
+use log::warn;
 use std::net::{IpAddr, ToSocketAddrs};
 use crate::ncsi::{ms, Check};
 use anyhow::{anyhow, bail};
@@ -30,15 +31,15 @@ pub(crate) async fn invoke_web_request(url: Url) -> anyhow::Result<Check> {
 }
 
 pub(crate) fn resolve_dns(url: &str) -> anyhow::Result<IpAddr> {
-    trace!("Resolving DNS address: {}", url);
-    
+    trace!("Resolving DNS address {}", url);
+
     // match url.to_socket_addrs() {
     //     Ok(_) => {
-    //         debug!("DNS address resolved");       
+    //         debug!("DNS address resolved");
     //         Ok(())
     //     },
     //     Err(_) => {
-    //         debug!("DNS address was not resolved");       
+    //         debug!("DNS address was not resolved");
     //         bail!("Failed to resolve DNS address")
     //     }
     // }
@@ -48,7 +49,7 @@ pub(crate) fn resolve_dns(url: &str) -> anyhow::Result<IpAddr> {
         .find(|addr| addr.is_ipv4())
         .map(|addr| addr.ip())
         .map(|ip| {
-            debug!("DNS address resolved to: {}", ip);
+            trace!("DNS address resolved to {}", ip);
             Ok(ip)
         })
         .ok_or(anyhow!("Failed to resolve DNS address"))
@@ -56,20 +57,20 @@ pub(crate) fn resolve_dns(url: &str) -> anyhow::Result<IpAddr> {
 }
 
 pub(crate) async fn request_web_content(url: &str) -> anyhow::Result<String> {
-    trace!("Invoking web request: {}", url);
+    trace!("Invoking GET request to {}", url);
     let result = reqwest::get(url).await?;
-    debug!("Received response {}", result.status());
+    trace!("Received response {}", result.status());
 
     if result.status() != StatusCode::OK {
-        return Err(anyhow!("Received status code {}", result.status()));       
+        return Err(anyhow!("Received NOK status code {}", result.status()));
     }
 
     let content = result.text().await?;
     if content.is_empty() {
-        debug!("Received empty content body");
-        return Err(anyhow!("Received empty content body"));       
+        warn!("Received empty content body");
+        return Err(anyhow!("Web request body was empty"));
     }
-    
+
     trace!("Received content '{}'", content);
     Ok(content)
 }

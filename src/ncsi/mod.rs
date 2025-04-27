@@ -2,10 +2,8 @@ mod codes;
 mod ms;
 mod probing;
 
-use std::net::IpAddr;
-use crate::ncsi::ms::{MS_WEB_IPV4_HOST};
 use anyhow::Result;
-use log::{debug, error, info, trace, warn};
+use log::{debug, error, trace, warn};
 use reqwest::Url;
 use std::process::ExitCode;
 
@@ -103,13 +101,13 @@ async fn probe_ipv4() -> Result<NcsiStatus> {
     debug!("Web request succeeded");
 
     let content_match = match get_content.as_str() {
-        MS_WEB_IPV4_CONTENT => {
-            debug!("Recieved content matches expected content");
+        ms::MS_WEB_IPV4_CONTENT => {
+            debug!("Received content matches expected content");
             Ok(())
         },
         _ => {
-            debug!("Unexpected content detected");
-            Err(anyhow::anyhow!("Unexpected content"))
+            warn!("Unexpected content detected");
+            Err(anyhow::anyhow!("Unexpected content in web request"))
         }
     };
 
@@ -117,7 +115,7 @@ async fn probe_ipv4() -> Result<NcsiStatus> {
     let dns_ip = probing::resolve_dns(ms::MS_DNS_IPV4_HOST_AND_PORT)
         .or_else(|e| {
             error!("DNS resolution of DNS host failed: {}", e);
-            Err(e)       
+            Err(e)
         })?;
     trace!("DNS resolution of DNS host succeeded and found IP {}", dns_ip);
     if dns_ip.to_string().eq(ms::MS_DNS_IPV4_IP) {
