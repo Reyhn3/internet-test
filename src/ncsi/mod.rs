@@ -4,14 +4,7 @@ mod probing;
 
 use anyhow::Result;
 use log::{debug, error, trace, warn};
-use reqwest::Url;
 use std::process::ExitCode;
-
-#[derive(PartialEq, Debug)]
-enum Check {
-    Success,
-    Failure,
-}
 
 #[derive(PartialEq, Debug)]
 enum NcsiStatus {
@@ -37,10 +30,10 @@ pub async fn run_ncsi() -> Result<ExitCode> {
     let ipv6_status = probe_ipv6().await;
     debug!("NCSI for IPv6 completed with status {:?}", ipv6_status);
     if ipv4_status.is_ok() {
-        return Ok(ExitCode::from(codes::NCSI_OUT_OF_OPTIONS));
+        return Ok(ExitCode::from(codes::NCSI_LIMITED_INTERNET_ACCESS));
     }
 
-    Ok(ExitCode::from(codes::NCSI_OUT_OF_OPTIONS))
+    Ok(ExitCode::from(codes::NCSI_NO_INTERNET_ACCESS))
 }
 
 async fn probe_ipv4() -> Result<NcsiStatus> {
