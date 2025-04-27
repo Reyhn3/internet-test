@@ -31,9 +31,15 @@ const MS_WEB_IPV6_PATH_W10PRE1607: &str = "ncsi.txt";
 
 pub(super) const MS_DNS_IPV4_HOST_AND_PORT: &str = concat!(
     MS_DNS_IPV4_HOST, ":80");
+pub(super) const MS_DNS_IPV6_HOST_AND_PORT: &str = concat!(
+    MS_DNS_IPV6_HOST, ":80");
 
 pub(super) const MS_WEB_IPV4_HOST_AND_PORT: &str = concat!(
     MS_WEB_IPV4_HOST, ":80");
+pub(super) const MS_WEB_IPV6_HOST_AND_PORT: &str = concat!(
+    MS_WEB_IPV6_HOST, ":80");
 
 pub(super) const MS_WEB_IPV4_URL: &str = concat!(
     "http://", MS_WEB_IPV4_HOST, "/", MS_WEB_IPV4_PATH);
+pub(super) const MS_WEB_IPV6_URL: &str = concat!(
+    "http://", MS_WEB_IPV6_HOST, "/", MS_WEB_IPV6_PATH);

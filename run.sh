@@ -1,3 +1,3 @@
 #!/bin/bash
 
-./target/debug/tic $@ ; echo "Exited with $?"
+./target/debug/tic $@ ; echo "Exited with code $?"

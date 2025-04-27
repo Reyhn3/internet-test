@@ -29,7 +29,7 @@ async fn main() -> ExitCode {
         }
         Err(e) => {
             error!("Error: {}", e);
-            ExitCode::FAILURE
+            ExitCode::from(ncsi::codes::GENERAL_ERROR)
         }
     }
 }

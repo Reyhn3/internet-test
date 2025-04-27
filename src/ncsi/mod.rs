@@ -1,4 +1,4 @@
-mod codes;
+pub(crate) mod codes;
 mod ms;
 mod probing;
 
@@ -26,14 +26,20 @@ enum NcsiStatus {
  * Result with a Check status.
  */
 pub async fn run_ncsi() -> Result<ExitCode> {
-//TODO: Return Internet Access, Limited Connectivity or No Internet Access.
-
     debug!("Running NCSI for IPv4");
-    let status = probe_ipv4().await;
-    debug!("NCSI for IPv4 completed with status {:?}", status);
-    if status.is_ok() {
+    let ipv4_status = probe_ipv4().await;
+    debug!("NCSI for IPv4 completed with status {:?}", ipv4_status);
+    if ipv4_status.is_ok() {
         return Ok(ExitCode::SUCCESS);
     }
+
+    debug!("Running NCSI for IPv6");
+    let ipv6_status = probe_ipv6().await;
+    debug!("NCSI for IPv6 completed with status {:?}", ipv6_status);
+    if ipv4_status.is_ok() {
+        return Ok(ExitCode::from(codes::NCSI_OUT_OF_OPTIONS));
+    }
+
     Ok(ExitCode::from(codes::NCSI_OUT_OF_OPTIONS))
 }
 
@@ -68,6 +74,52 @@ async fn probe_ipv4() -> Result<NcsiStatus> {
         })?;
     trace!("DNS resolution of DNS host succeeded and found IP {}", dns_ip);
     if dns_ip.to_string().eq(ms::MS_DNS_IPV4_IP) {
+        debug!("DNS IP matches expected IP");
+    } else {
+        warn!("DNS IP does not match expected IP");
+    }
+    debug!("DNS resolution of DNS host succeeded");
+
+    if content_match.is_ok() {
+        debug!("Internet access detected");
+        return Ok(NcsiStatus::InternetAccess);
+    }
+
+    debug!("Limited connectivity detected");
+    Ok(NcsiStatus::LimitedConnectivity)
+}
+
+async fn probe_ipv6() -> Result<NcsiStatus> {
+    trace!("DNS resolution of web host started");
+    probing::resolve_dns(ms::MS_WEB_IPV6_HOST_AND_PORT).or_else(|e| {
+        error!("DNS resolution of web host failed: {}", e);
+        Err(e)
+    })?;
+    debug!("DNS resolution of web host succeeded");
+
+    trace!("Web request started");
+    let get_content = probing::request_web_content(ms::MS_WEB_IPV6_URL).await?;
+    debug!("Web request succeeded");
+
+    let content_match = match get_content.as_str() {
+        ms::MS_WEB_IPV6_CONTENT => {
+            debug!("Received content matches expected content");
+            Ok(())
+        },
+        _ => {
+            warn!("Unexpected content detected");
+            Err(anyhow::anyhow!("Unexpected content in web request"))
+        }
+    };
+
+    trace!("DNS resolution of DNS host started");
+    let dns_ip = probing::resolve_dns(ms::MS_DNS_IPV6_HOST_AND_PORT)
+        .or_else(|e| {
+            error!("DNS resolution of DNS host failed: {}", e);
+            Err(e)
+        })?;
+    trace!("DNS resolution of DNS host succeeded and found IP {}", dns_ip);
+    if dns_ip.to_string().eq(ms::MS_DNS_IPV6_IP) {
         debug!("DNS IP matches expected IP");
     } else {
         warn!("DNS IP does not match expected IP");
