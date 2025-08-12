@@ -2,7 +2,7 @@ use chrono::Local;
 use log::{debug, error, info, log_enabled, trace, warn, Level, LevelFilter};
 use std::io::Write;
 
-const DATE_FORMAT_STR: &'static str = "%H:%M:%S";
+const DATE_FORMAT_STR: &'static str = "%H:%M:%S.%f";
 
 pub fn init(quiet: bool, verbose: bool) {
     if quiet {
