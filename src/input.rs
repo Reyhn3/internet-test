@@ -1,12 +1,13 @@
+use anstyle::{AnsiColor, Color, Style};
 use clap::{builder, Parser};
 use std::fmt::Debug;
-use anstyle::{AnsiColor, Color, Style};
 
 /// Checks whether there is a working Internet connection.
 #[derive(Parser, Debug)]
 #[clap(author, version, about, long_about = None)]
 #[command(styles=get_styles())]
 pub struct Args {
+//TODO: Remove when done learning
     /// Enable debug logs to the terminal.
     #[clap(long, short, action, hide(true))]
     pub(crate) debug: bool,
@@ -17,7 +18,7 @@ pub struct Args {
 
     /// Enable full output to the terminal.
     #[clap(long, short, action)]
-    pub(crate) verbose: bool
+    pub(crate) verbose: bool,
 }
 
 fn get_styles() -> builder::Styles {
@@ -34,9 +35,7 @@ fn get_styles() -> builder::Styles {
                 .underline()
                 .fg_color(Some(Color::Ansi(AnsiColor::Yellow))),
         )
-        .literal(
-            Style::new().fg_color(Some(Color::Ansi(AnsiColor::Green))),
-        )
+        .literal(Style::new().fg_color(Some(Color::Ansi(AnsiColor::Green))))
         .invalid(
             Style::new()
                 .bold()
@@ -53,7 +52,5 @@ fn get_styles() -> builder::Styles {
                 .underline()
                 .fg_color(Some(Color::Ansi(AnsiColor::Green))),
         )
-        .placeholder(
-            Style::new().fg_color(Some(Color::Ansi(AnsiColor::White))),
-        )
+        .placeholder(Style::new().fg_color(Some(Color::Ansi(AnsiColor::White))))
 }

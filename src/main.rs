@@ -1,9 +1,9 @@
 mod input;
-mod logger;
+mod logging;
+mod ncsi;
 
-use anyhow::Result;
 use clap::Parser;
-use log::{debug, error, info, trace, warn};
+use log::{error, info};
 use std::process::ExitCode;
 
 #[tokio::main]
@@ -11,26 +11,25 @@ async fn main() -> ExitCode {
     let args = input::Args::parse();
     let quiet = args.quiet;
     let verbose = args.verbose;
+
+    logging::init(quiet, verbose);
+
+//TODO: Remove when done learning
     let debug = args.debug;
+    logging::log_debug(debug);
 
-    logger::init(quiet, verbose);
-    logger::log_debug(debug);
-
-    return match url_lookup().await {
-        Ok(_) => {
-            info!("Working Internet connection detected");
-            ExitCode::SUCCESS
+    match ncsi::run_ncsi().await {
+        Ok(result) => {
+            if result == ExitCode::SUCCESS {
+                info!("Working Internet connection detected")
+            } else {
+                error!("No working Internet connection detected")
+            }
+            result
         }
         Err(e) => {
             error!("Error: {}", e);
-            ExitCode::SUCCESS
+            ExitCode::from(ncsi::codes::GENERAL_ERROR)
         }
-    };
-}
-
-async fn url_lookup() -> Result<()> {
-    //TODO: Implement
-    // return Err(anyhow::anyhow!("URL lookup failed"));
-
-    Ok(())
+    }
 }

@@ -1,0 +1,3 @@
+pub const GENERAL_ERROR: u8 = 0xFF;
+pub const NCSI_LIMITED_INTERNET_ACCESS: u8 = 0x01;
+pub const NCSI_NO_INTERNET_ACCESS: u8 = 0x02;

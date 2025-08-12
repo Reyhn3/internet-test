@@ -2,7 +2,7 @@ use chrono::Local;
 use log::{debug, error, info, log_enabled, trace, warn, Level, LevelFilter};
 use std::io::Write;
 
-const DATE_FORMAT_STR: &'static str = "%H:%M:%S";
+const DATE_FORMAT_STR: &'static str = "%H:%M:%S.%f";
 
 pub fn init(quiet: bool, verbose: bool) {
     if quiet {
@@ -42,7 +42,7 @@ pub fn init(quiet: bool, verbose: bool) {
         .init();
 }
 
-//TODO: Remove
+//TODO: Remove when done learning
 pub fn log_debug(debug: bool) {
     if !cfg!(debug_assertions) {
         return;
