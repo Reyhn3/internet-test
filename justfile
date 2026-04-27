@@ -3,9 +3,13 @@ alias v := verbose
 
 bin := "./target/debug/tic"
 
+# run the application without args
+run-empty:
+    @{{bin}}
+
 # run the application
 run args:
-    ./target/debug/tic {{args}}
+    @{{bin}} {{args}}
 
 # build main
 build:
