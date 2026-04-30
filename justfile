@@ -1,7 +1,7 @@
 alias q := quiet
 alias v := verbose
 
-bin := "./target/debug/tic"
+bin := "./target/debug/it"
 
 # run the application without args
 run-empty:
