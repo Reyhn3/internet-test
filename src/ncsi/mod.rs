@@ -29,7 +29,7 @@ pub async fn run_ncsi() -> Result<ExitCode> {
     debug!("Running NCSI for IPv6");
     let ipv6_status = probe_ipv6().await;
     debug!("NCSI for IPv6 completed with status {:?}", ipv6_status);
-    if ipv4_status.is_ok() {
+    if ipv6_status.is_ok() {
         return Ok(ExitCode::from(codes::NCSI_LIMITED_INTERNET_ACCESS));
     }
 
