@@ -5,7 +5,9 @@ pub struct Check {
 }
 
 pub struct ConnectivityCheckResult {
-    pub check: Check,
+    pub uri: String,
+    pub ip: Option<String>,
+    pub dns: bool,
     pub success: bool,
 }
 
