@@ -1,6 +1,8 @@
 mod input;
 mod logging;
 mod ncsi;
+mod probing;
+
 pub(crate) mod codes;
 
 use clap::Parser;

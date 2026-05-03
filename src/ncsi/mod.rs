@@ -1,10 +1,10 @@
 mod ms;
-mod probing;
 
 use anyhow::Result;
 use log::{debug, error, trace, warn};
 use std::process::ExitCode;
 use crate::codes;
+use crate::probing;
 
 #[derive(PartialEq, Debug)]
 enum NcsiStatus {
