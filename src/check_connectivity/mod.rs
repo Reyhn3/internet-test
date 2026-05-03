@@ -27,9 +27,11 @@ async fn execute_strategy(check: &Check) -> Result<ConnectivityCheckResult> {
     // We'll default to true for now since it's a mock implementation.
     Ok(ConnectivityCheckResult {
         uri: check.uri.clone(),
-        ip: Some("fake".to_string()),
-        dns: true,
-        success: true,
+//TODO: Set these values
+        dns_resolved: true,
+        get_succeeded: true,
+        content_matched: true,
+        ip: Some("fake".to_string())
     })
 }
 

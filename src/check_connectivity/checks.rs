@@ -6,9 +6,10 @@ pub struct Check {
 
 pub struct ConnectivityCheckResult {
     pub uri: String,
-    pub ip: Option<String>,
-    pub dns: bool,
-    pub success: bool,
+    pub dns_resolved: bool,
+    pub get_succeeded: bool,
+    pub content_matched: bool,
+    pub ip: Option<String>
 }
 
 pub fn get_default_check_list() -> Vec<Check> {
