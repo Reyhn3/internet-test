@@ -1,6 +1,7 @@
 mod input;
 mod logging;
 mod ncsi;
+pub(crate) mod codes;
 
 use clap::Parser;
 use log::{error, info};
@@ -29,7 +30,7 @@ async fn main() -> ExitCode {
         }
         Err(e) => {
             error!("Error: {}", e);
-            ExitCode::from(ncsi::codes::GENERAL_ERROR)
+            ExitCode::from(codes::GENERAL_ERROR)
         }
     }
 }
