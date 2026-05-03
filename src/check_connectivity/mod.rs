@@ -1,12 +1,12 @@
 pub(crate) mod checks;
-mod analysis;
+pub(crate) mod analysis;
 
 use log::info;
 use anyhow::Result;
 use crate::check_connectivity::checks::{Check, ConnectivityCheckResult};
 use crate::check_connectivity::analysis::{Analyzer};
 
-pub async fn check_internet_connectivity(checks: Vec<Check>) -> Result<bool> {
+pub async fn check_internet_connectivity(checks: Vec<Check>) -> Result<analysis::Verdict> {
     let mut results = Vec::new();
 
     for check in checks {
@@ -39,6 +39,7 @@ async fn execute_strategy(check: &Check) -> Result<ConnectivityCheckResult> {
 mod tests {
     use super::*;
 
+//TODO: Refactor this test to actually test something
     #[tokio::test]
     async fn test_connectivity_check() {
         let checks = vec![
@@ -49,6 +50,6 @@ mod tests {
             },
         ];
         let result = check_internet_connectivity(checks).await.unwrap();
-        assert!(result);
+        assert_eq!(result, analysis::Verdict::None);
     }
 }

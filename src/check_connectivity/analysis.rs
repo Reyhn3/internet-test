@@ -1,5 +1,13 @@
 use crate::check_connectivity::checks::ConnectivityCheckResult;
 
+#[derive(PartialEq, Debug)]
+pub(crate) enum Verdict {
+    Error,
+    None,
+    Limited,
+    Full,
+}
+
 pub(crate) struct Analyzer {
     results: Vec<ConnectivityCheckResult>,
 }
@@ -12,14 +20,15 @@ impl Analyzer {
         }
     }
 
-//TODO: Change return type to constant
-    pub(crate) fn analyze(&self) -> bool {
+    pub(crate) fn analyze(&self) -> Verdict {
         if self.results.is_empty() {
-            return false;
+            return Verdict::Error;
         }
 
-        // Basic conclusion: all checks must succeed
-        self.results.iter().all(|r| r.dns_resolved && r.get_succeeded && r.content_matched)
+//TODO: Implement analysis
+        // self.results.iter()
+        //     .all(|r| r.dns_resolved && r.get_succeeded && r.content_matched)
+        Verdict::None
     }
 }
 
@@ -39,6 +48,6 @@ mod tests {
             },
         ];
         let verdict = Analyzer::new(results).analyze();
-        assert!(!verdict);
+        assert_eq!(verdict, Verdict::None);
     }
 }
