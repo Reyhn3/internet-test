@@ -1,3 +1,5 @@
 pub const GENERAL_ERROR: u8 = 0xFF;
-pub const NCSI_LIMITED_INTERNET_ACCESS: u8 = 0x01;
-pub const NCSI_NO_INTERNET_ACCESS: u8 = 0x02;
+
+pub const INTERNET_ACCESS_FULL: u8 = 0x00;
+pub const INTERNET_ACCESS_LIMITED: u8 = 0x01;
+pub const INTERNET_ACCESS_NONE: u8 = 0x02;
