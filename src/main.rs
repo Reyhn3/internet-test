@@ -9,7 +9,6 @@ pub(crate) mod codes;
 use clap::Parser;
 use log::{error, info, warn};
 use std::process::ExitCode;
-use crate::check_connectivity::checks::{Check};
 use crate::check_connectivity::analysis::{Verdict};
 
 #[tokio::main]

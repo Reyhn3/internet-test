@@ -21,10 +21,6 @@ pub async fn check_internet_connectivity(checks: Vec<Check>) -> Result<analysis:
 async fn execute_strategy(check: &Check) -> Result<ConnectivityCheckResult> {
     info!("Executing check: URI={}, Expected Response='{}'", check.uri, check.expected_response.as_deref().unwrap_or("None"));
 
-    // For now, the strategy only logs and returns a success indicator.
-    // Based on the requirement "return an Error-object that is failed in case of errors, 
-    // or a boolean that indicates whether the check was successful or not."
-    // We'll default to true for now since it's a mock implementation.
     Ok(ConnectivityCheckResult {
         uri: check.uri.clone(),
 //TODO: Set these values
