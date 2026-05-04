@@ -1,10 +1,12 @@
 pub(crate) mod checks;
 pub(crate) mod analysis;
+mod strategy;
 
 use log::info;
 use anyhow::Result;
+use crate::check_connectivity::analysis::Analyzer;
 use crate::check_connectivity::checks::{Check, ConnectivityCheckResult};
-use crate::check_connectivity::analysis::{Analyzer};
+use crate::check_connectivity::strategy::Strategy;
 
 pub async fn check_internet_connectivity(checks: Vec<Check>) -> Result<analysis::Verdict> {
     let mut results = Vec::new();
@@ -19,16 +21,14 @@ pub async fn check_internet_connectivity(checks: Vec<Check>) -> Result<analysis:
 }
 
 async fn execute_strategy(check: &Check) -> Result<ConnectivityCheckResult> {
-    info!("Executing check: URI={}, Expected Response='{}'", check.uri, check.expected_response.as_deref().unwrap_or("None"));
+    info!(
+        "Executing check: URI={}, Expected Response='{}'",
+        check.uri,
+        check.expected_response.as_deref().unwrap_or("None")
+    );
 
-    Ok(ConnectivityCheckResult {
-        uri: check.uri.clone(),
-//TODO: Set these values
-        dns_resolved: true,
-        get_succeeded: true,
-        content_matched: true,
-        ip: Some("fake".to_string())
-    })
+    let strategy = Strategy::new();
+    strategy.execute(check).await
 }
 
 #[cfg(test)]

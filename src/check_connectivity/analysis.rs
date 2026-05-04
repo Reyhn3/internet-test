@@ -9,7 +9,7 @@ pub(crate) enum Verdict {
 }
 
 pub(crate) struct Analyzer {
-    results: Vec<ConnectivityCheckResult>,
+    results: Vec<ConnectivityCheckResult>
 }
 
 impl Analyzer {
