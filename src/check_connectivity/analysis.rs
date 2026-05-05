@@ -59,6 +59,7 @@ impl Analyzer {
 
 #[cfg(test)]
 mod tests {
+    use std::net::{IpAddr, Ipv4Addr};
     use super::*;
 
     #[test]
@@ -66,7 +67,7 @@ mod tests {
         let results = vec![
             ConnectivityCheckResult {
                 uri: "test-uri".to_string(),
-                ip: Option::from("test-ip".to_string()),
+                ip: Option::from(IpAddr:: V4(Ipv4Addr::LOCALHOST)),
                 dns_resolved: false,
                 get_succeeded: false,
                 content_matched: false
@@ -81,7 +82,7 @@ mod tests {
         let results = vec![
             ConnectivityCheckResult {
                 uri: "test-uri".to_string(),
-                ip: Option::from("test-ip".to_string()),
+                ip: Option::from(IpAddr:: V4(Ipv4Addr::LOCALHOST)),
                 dns_resolved: false,
                 get_succeeded: true,
                 content_matched: true
@@ -96,7 +97,7 @@ mod tests {
         let results = vec![
             ConnectivityCheckResult {
                 uri: "test-uri".to_string(),
-                ip: Option::from("test-ip".to_string()),
+                ip: Option::from(IpAddr:: V4(Ipv4Addr::LOCALHOST)),
                 dns_resolved: true,
                 get_succeeded: false,
                 content_matched: true
@@ -111,7 +112,7 @@ mod tests {
         let results = vec![
             ConnectivityCheckResult {
                 uri: "test-uri".to_string(),
-                ip: Option::from("test-ip".to_string()),
+                ip: Option::from(IpAddr:: V4(Ipv4Addr::LOCALHOST)),
                 dns_resolved: true,
                 get_succeeded: true,
                 content_matched: false
@@ -126,7 +127,7 @@ mod tests {
         let results = vec![
             ConnectivityCheckResult {
                 uri: "test-uri".to_string(),
-                ip: Option::from("test-ip".to_string()),
+                ip: Option::from(IpAddr:: V4(Ipv4Addr::LOCALHOST)),
                 dns_resolved: true,
                 get_succeeded: true,
                 content_matched: true
@@ -141,14 +142,14 @@ mod tests {
         let results = vec![
             ConnectivityCheckResult {
                 uri: "test-uri".to_string(),
-                ip: Option::from("test-ip".to_string()),
+                ip: Option::from(IpAddr:: V4(Ipv4Addr::LOCALHOST)),
                 dns_resolved: false,
                 get_succeeded: false,
                 content_matched: false
             },
             ConnectivityCheckResult {
                 uri: "test-uri".to_string(),
-                ip: Option::from("test-ip".to_string()),
+                ip: Option::from(IpAddr:: V4(Ipv4Addr::LOCALHOST)),
                 dns_resolved: false,
                 get_succeeded: false,
                 content_matched: false
@@ -163,14 +164,14 @@ mod tests {
         let results = vec![
             ConnectivityCheckResult {
                 uri: "test-uri".to_string(),
-                ip: Option::from("test-ip".to_string()),
+                ip: Option::from(IpAddr:: V4(Ipv4Addr::LOCALHOST)),
                 dns_resolved: false,
                 get_succeeded: false,
                 content_matched: false
             },
             ConnectivityCheckResult {
                 uri: "test-uri".to_string(),
-                ip: Option::from("test-ip".to_string()),
+                ip: Option::from(IpAddr:: V4(Ipv4Addr::LOCALHOST)),
                 dns_resolved: true,
                 get_succeeded: true,
                 content_matched: true
@@ -185,14 +186,14 @@ mod tests {
         let results = vec![
             ConnectivityCheckResult {
                 uri: "test-uri".to_string(),
-                ip: Option::from("test-ip".to_string()),
+                ip: Option::from(IpAddr:: V4(Ipv4Addr::LOCALHOST)),
                 dns_resolved: true,
                 get_succeeded: true,
                 content_matched: true
             },
             ConnectivityCheckResult {
                 uri: "test-uri".to_string(),
-                ip: Option::from("test-ip".to_string()),
+                ip: Option::from(IpAddr:: V4(Ipv4Addr::LOCALHOST)),
                 dns_resolved: true,
                 get_succeeded: true,
                 content_matched: true

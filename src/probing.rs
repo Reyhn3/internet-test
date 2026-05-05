@@ -1,25 +1,22 @@
-use anyhow::anyhow;
+use anyhow::{anyhow, Result};
 use log::warn;
 use log::trace;
 use reqwest::StatusCode;
 use std::net::{IpAddr, ToSocketAddrs};
 
-pub(crate) fn resolve_dns(url: &str) -> anyhow::Result<IpAddr> {
+pub(crate) fn resolve_dns(url: &str) -> Result<IpAddr> {
     trace!("Resolving DNS address {}", url);
-
-    let mut addrs = url.to_socket_addrs()?;
-    addrs
+    url.to_socket_addrs()?
         .find(|addr| addr.is_ipv4())
         .map(|addr| addr.ip())
         .map(|ip| {
             trace!("DNS address resolved to {}", ip);
             Ok(ip)
         })
-        .ok_or(anyhow!("Failed to resolve DNS address"))
-        .unwrap()
+        .ok_or(anyhow!("Failed to resolve DNS address"))?
 }
 
-pub(crate) async fn request_web_content(url: &str) -> anyhow::Result<String> {
+pub(crate) async fn request_web_content(url: &str) -> Result<String> {
     trace!("Invoking GET request to {}", url);
     let result = reqwest::get(url).await?;
     trace!("Received response {}", result.status());

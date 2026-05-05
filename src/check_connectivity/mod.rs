@@ -2,8 +2,8 @@ pub(crate) mod checks;
 pub(crate) mod analysis;
 mod strategy;
 
-use log::info;
-use anyhow::Result;
+use log::debug;
+use anyhow::{anyhow, Result};
 use crate::check_connectivity::analysis::Analyzer;
 use crate::check_connectivity::checks::{Check, ConnectivityCheckResult};
 use crate::check_connectivity::strategy::Strategy;
@@ -21,14 +21,15 @@ pub async fn check_internet_connectivity(checks: Vec<Check>) -> Result<analysis:
 }
 
 async fn execute_strategy(check: &Check) -> Result<ConnectivityCheckResult> {
-    info!(
-        "Executing check: URI={}, Expected Response='{}'",
+    debug!(
+        "Executing check: URI={}, Expected Response='{:?}'",
         check.uri,
-        check.expected_response.as_deref().unwrap_or("None")
+        check.expected_response
     );
 
     let strategy = Strategy::new();
     strategy.execute(check).await
+        .or_else(|e| Err(anyhow!("Failed to execute strategy for check {} due to: {}", check.uri, e)))
 }
 
 #[cfg(test)]
