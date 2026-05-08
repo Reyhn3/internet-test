@@ -48,13 +48,14 @@ impl Strategy {
         trace!("Checking content match");
         if let Some(expected) = &check.expected_response {
             if content.starts_with(expected) {
+                debug!("Content matched");
                 result.content_matched = true;
             }
         } else {
-            result.content_matched = true; 
+            debug!("No content expected");
+            result.content_matched = true;
         }
 
-        debug!("Content matched: {}", result.content_matched);
         Ok(result)
     }
 }

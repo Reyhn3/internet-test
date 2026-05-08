@@ -1,5 +1,5 @@
 use anyhow::{anyhow, Result};
-use log::warn;
+use log::{debug, warn};
 use log::trace;
 use reqwest::StatusCode;
 use std::net::{IpAddr, ToSocketAddrs};
@@ -19,7 +19,7 @@ pub(crate) fn resolve_dns(url: &str) -> Result<IpAddr> {
 pub(crate) async fn request_web_content(url: &str) -> Result<String> {
     trace!("Invoking GET request to {}", url);
     let result = reqwest::get(url).await?;
-    trace!("Received response {}", result.status());
+    debug!("Received response {}", result.status());
 
     if result.status() != StatusCode::OK {
         return Err(anyhow!("Received NOK status code {}", result.status()));
