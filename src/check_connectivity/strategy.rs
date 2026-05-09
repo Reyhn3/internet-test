@@ -1,5 +1,5 @@
 use anyhow::Result;
-use log::{debug, error, trace};
+use log::{debug, error, trace, warn};
 use crate::check_connectivity::checks::{Check, ConnectivityCheckResult, NmCheck, NcsiCheck};
 use crate::probing;
 
@@ -20,7 +20,7 @@ impl<'a> NmStrategy<'a> {
 impl<'a> Strategy for NmStrategy<'a> {
     async fn execute(&self) -> Result<ConnectivityCheckResult> {
         let dns_uri = probing::fqdn_with_port80(self.check.uri.as_str())?;
-        
+
         let mut result = ConnectivityCheckResult {
             uri: self.check.uri.clone(),
             dns_resolved: false,
@@ -57,9 +57,15 @@ impl<'a> Strategy for NmStrategy<'a> {
 
         trace!("Checking content match");
         if let Some(expected) = &self.check.expected_response {
-            if content.starts_with(expected) {
-                debug!("Content matched");
-                result.content_matched = true;
+            if content.is_none() {
+                warn!("Expected content '{}' but none was received", expected);
+            } else {
+                if let Some(actual) = content && actual.starts_with(expected) {
+                    debug!("Content matched");
+                    result.content_matched = true;
+                } else {
+                    error!("Content did not match");
+                }
             }
         } else {
             debug!("No content expected");
@@ -117,15 +123,20 @@ impl<'a> Strategy for NcsiStrategy<'a> {
         };
 
         trace!("NCSI Checking content match");
-        if content.starts_with(&self.check.web_expected_response) {
-            debug!("NCSI Content matched");
-            result.content_matched = true;
-        } else {
-            debug!("NCSI Content did NOT match");
-            result.content_matched = false;
-            // In NCSI, if web content doesn't match, it might be limited connectivity.
-            // But for ConnectivityCheckResult, we just report what happened.
+        if content.is_none() {
+            error!("NCSI content was expected but is missing");
             return Ok(result);
+        } else {
+            if let Some(actual) = content && actual.starts_with(&self.check.web_expected_response) {
+                debug!("NCSI content matched");
+                result.content_matched = true;
+            } else {
+                debug!("NCSI content did NOT match");
+                result.content_matched = false;
+                // In NCSI, if web content doesn't match, it might be limited connectivity.
+                // But for ConnectivityCheckResult, we just report what happened.
+                return Ok(result);
+            }
         }
 
         trace!("NCSI DNS resolution of DNS host started");

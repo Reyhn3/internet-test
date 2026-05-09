@@ -16,13 +16,18 @@ pub(crate) fn resolve_dns(url: &str) -> Result<IpAddr> {
         .ok_or(anyhow!("Failed to resolve DNS address"))?
 }
 
-pub(crate) async fn request_web_content(url: &str) -> Result<String> {
+pub(crate) async fn request_web_content(url: &str) -> Result<Option<String>> {
     trace!("Invoking GET request to {}", url);
     let result = reqwest::get(url).await?;
     debug!("Received response {}", result.status());
 
-    if result.status() != StatusCode::OK {
+    if result.status() != StatusCode::OK && result.status() != StatusCode::NO_CONTENT {
         return Err(anyhow!("Received NOK status code {}", result.status()));
+    }
+
+    if result.status() == StatusCode::NO_CONTENT {
+        trace!("Received NO_CONTENT status code, returning empty string");
+        return Ok(None);
     }
 
     let content = result.text().await?;
@@ -33,7 +38,7 @@ pub(crate) async fn request_web_content(url: &str) -> Result<String> {
 
 //TODO: Get only the first 50 chars (if more)
     trace!("Received content '{}'", content);
-    Ok(content)
+    Ok(Some(content))
 }
 
 pub(crate) fn fqdn(input: &str) -> Result<String> {
