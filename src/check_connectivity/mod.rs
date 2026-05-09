@@ -2,11 +2,10 @@ pub(crate) mod checks;
 pub(crate) mod analysis;
 mod strategy;
 
-use log::debug;
-use anyhow::{anyhow, Result};
+use anyhow::Result;
 use crate::check_connectivity::analysis::Analyzer;
-use crate::check_connectivity::checks::{Check, ConnectivityCheckResult};
-use crate::check_connectivity::strategy::Strategy;
+use crate::check_connectivity::checks::Check;
+use crate::check_connectivity::strategy::execute_strategy;
 
 pub async fn check_internet_connectivity(checks: Vec<Check>) -> Result<analysis::Verdict> {
     let mut results = Vec::new();
@@ -20,31 +19,20 @@ pub async fn check_internet_connectivity(checks: Vec<Check>) -> Result<analysis:
     Ok(analyzer.analyze())
 }
 
-async fn execute_strategy(check: &Check) -> Result<ConnectivityCheckResult> {
-    debug!(
-        "Executing check: URI={}, Expected Response='{:?}'",
-        check.uri,
-        check.expected_response
-    );
-
-    let strategy = Strategy::new();
-    strategy.execute(check).await
-        .or_else(|e| Err(anyhow!("Failed to execute strategy for check {} due to: {}", check.uri, e)))
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::check_connectivity::checks::NmCheck;
 
 //TODO: Refactor this test to actually test something
     #[tokio::test]
     async fn test_connectivity_check() {
         let checks = vec![
-            Check {
+            Check::Nm(NmCheck {
                 uri: "http://example.com".to_string(),
                 expected_response: Option::from("OK".to_string()),
                 proceed_on_error: true
-            },
+            }),
         ];
         let result = check_internet_connectivity(checks).await.unwrap();
         assert_eq!(result, analysis::Verdict::None);

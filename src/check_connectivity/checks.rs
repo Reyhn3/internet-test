@@ -1,11 +1,27 @@
 use std::net::IpAddr;
 use crate::ncsi;
 
-pub struct Check {
+pub struct NmCheck {
+//TODO: Change to &str or Uri
     pub uri: String,
-    pub expected_response: Option<String>,
-//TODO: Remove or use
-    pub proceed_on_error: bool
+    pub expected_response: Option<String>
+}
+
+pub struct NcsiCheck {
+//TODO: Change to &str or Uri
+    pub dns_first_host: String,
+//TODO: Change to &str or Uri
+    pub web_uri: String,
+    pub web_expected_response: String,
+//TODO: Change to &str or Uri
+    pub dns_second_host: String,
+//TODO: Change to IpAddr
+    pub dns_second_expected_ip: String
+}
+
+pub enum Check {
+    Nm(NmCheck),
+    Ncsi(NcsiCheck)
 }
 
 pub struct ConnectivityCheckResult {
@@ -18,8 +34,28 @@ pub struct ConnectivityCheckResult {
 
 pub fn get_default_check_list() -> Vec<Check> {
     vec![
-//TODO: Set these to real values
-        Check { uri: ncsi::ms::MS_DNS_IPV4_HOST_AND_PORT.to_owned(), expected_response: Some("hello".to_string()), proceed_on_error: true },
-        Check { uri: ncsi::ms::MS_WEB_IPV4_URL.to_owned(), expected_response: None, proceed_on_error: true }
+        Check::Nm(NmCheck {
+            uri: String::from("https://ping.archlinux.org/"),
+            expected_response: Some(String::from("This domain is used for connectivity checking"))
+        }),
+        Check::Nm(NmCheck {
+            uri: String::from("http://nmcheck.gnome.org/check_network_status.txt"),
+            expected_response: Some(String::from("NetworkManager is online"))
+        }),
+        Check::Nm(NmCheck {
+            uri: String::from("https://fedoraproject.org/static/hotspot.txt"),
+            expected_response: Some(String::from("OK"))
+        }),
+        Check::Nm(NmCheck {
+            uri: String::from("http://connectivity-check.ubuntu.com/"),
+            expected_response: None
+        }),
+        Check::Ncsi(NcsiCheck {
+            dns_first_host: String::from("www.msftconnecttest.com:80"),
+            web_uri: String::from("http://www.msftconnecttest.com/connecttest.txt"),
+            web_expected_response: String::from("Microsoft Connect Test"),
+            dns_second_host: String::from("dns.msftncsi.com:80"),
+            dns_second_expected_ip: String::from("131.107.255.255")
+        })
     ]
 }

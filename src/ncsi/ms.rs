@@ -9,15 +9,15 @@ use constcat::concat;
  * https://learn.microsoft.com/en-us/windows-server/networking/ncsi/ncsi-frequently-asked-questions#where-is-the-http-web-probe-server-path-found-in-the-registry
  */
 
-pub(super) const MS_DNS_IPV4_IP: &str = "131.107.255.255";
-pub(super) const MS_DNS_IPV6_IP: &str = "fd3e:4f5a:5b81::1";
+pub(crate) const MS_DNS_IPV4_IP: &str = "131.107.255.255";
+pub(crate) const MS_DNS_IPV6_IP: &str = "fd3e:4f5a:5b81::1";
 
 const MS_DNS_IPV4_HOST: &str = "dns.msftncsi.com";
 const MS_DNS_IPV6_HOST: &str = "dns.msftncsi.com";
 
-pub(super) const MS_WEB_IPV4_CONTENT: &str = "Microsoft Connect Test";
-pub(super) const MS_WEB_IPV6_CONTENT: &str = "Microsoft Connect Test";
-pub(super) const MS_WEB_IPV4_CONTENT_W10PRE1607: &str = "Microsoft NCSI";
+pub(crate) const MS_WEB_IPV4_CONTENT: &str = "Microsoft Connect Test";
+pub(crate) const MS_WEB_IPV6_CONTENT: &str = "Microsoft Connect Test";
+pub(crate) const MS_WEB_IPV4_CONTENT_W10PRE1607: &str = "Microsoft NCSI";
 
 const MS_WEB_IPV4_HOST: &str = "www.msftconnecttest.com";
 const MS_WEB_IPV6_HOST: &str = "ipv6.msftconnecttest.com";

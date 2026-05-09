@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Result};
+use anyhow::{anyhow, Context, Result};
 use log::{debug, warn};
 use log::trace;
 use reqwest::StatusCode;
@@ -31,6 +31,24 @@ pub(crate) async fn request_web_content(url: &str) -> Result<String> {
         return Err(anyhow!("Web request body was empty"));
     }
 
+//TODO: Get only the first 50 chars (if more)
     trace!("Received content '{}'", content);
     Ok(content)
+}
+
+pub(crate) fn fqdn(input: &str) -> Result<String> {
+    let url = reqwest::Url::parse(input)
+        .with_context(|| format!("invalid URL: {input}"))?;
+
+    let host = url
+        .host_str()
+        .context("URL does not contain a host")?;
+
+    Ok(host.to_string())
+}
+
+pub(crate) fn fqdn_with_port80(input: &str) -> Result<String> {
+    let host = fqdn(input)?;
+
+    Ok(format!("{host}:80"))
 }

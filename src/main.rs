@@ -51,18 +51,4 @@ async fn main() -> ExitCode {
         }
     }
 
-    // match ncsi::run_ncsi().await {
-    //     Ok(result) => {
-    //         if result == ExitCode::SUCCESS {
-    //             info!("Working Internet connection detected")
-    //         } else {
-    //             error!("No working Internet connection detected")
-    //         }
-    //         result
-    //     }
-    //     Err(e) => {
-    //         error!("Error: {}", e);
-    //         ExitCode::from(codes::GENERAL_ERROR)
-    //     }
-    // }
 }
