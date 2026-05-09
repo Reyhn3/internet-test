@@ -1,5 +1,4 @@
 use std::net::IpAddr;
-use crate::ncsi;
 
 pub struct NmCheck {
 //TODO: Change to &str or Uri

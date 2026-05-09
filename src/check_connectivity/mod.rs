@@ -30,8 +30,7 @@ mod tests {
         let checks = vec![
             Check::Nm(NmCheck {
                 uri: "http://example.com".to_string(),
-                expected_response: Option::from("OK".to_string()),
-                proceed_on_error: true
+                expected_response: Option::from("OK".to_string())
             }),
         ];
         let result = check_internet_connectivity(checks).await.unwrap();

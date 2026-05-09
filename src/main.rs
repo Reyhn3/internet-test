@@ -1,6 +1,5 @@
 mod input;
 mod logging;
-mod ncsi;
 mod probing;
 mod check_connectivity;
 
