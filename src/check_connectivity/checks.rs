@@ -18,6 +18,7 @@ pub struct NcsiCheck {
     pub dns_second_expected_ip: String
 }
 
+//TODO: Implement std::fmt::Display
 pub enum Check {
     Nm(NmCheck),
     Ncsi(NcsiCheck)

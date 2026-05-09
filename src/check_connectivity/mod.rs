@@ -3,16 +3,24 @@ pub(crate) mod analysis;
 mod strategy;
 
 use anyhow::Result;
+use log::debug;
 use crate::check_connectivity::analysis::Analyzer;
 use crate::check_connectivity::checks::Check;
 use crate::check_connectivity::strategy::execute_strategy;
+use crate::logging::{clear_scope, set_scope};
 
 pub async fn check_internet_connectivity(checks: Vec<Check>) -> Result<analysis::Verdict> {
     let mut results = Vec::new();
 
-    for check in checks {
+    for (index, check) in checks.into_iter().enumerate() {
+        set_scope(index);
+//TODO: Log begin and end of check execution
+//        debug!("Executing check: {}", &check);
+        
         let result = execute_strategy(&check).await?;
         results.push(result);
+        
+        clear_scope();
     }
 
     let analyzer = Analyzer::new(results);
