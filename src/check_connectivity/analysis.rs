@@ -1,3 +1,4 @@
+use anyhow::Result;
 use crate::check_connectivity::checks::ConnectivityCheckResult;
 
 #[derive(PartialEq, Debug)]
@@ -9,11 +10,11 @@ pub(crate) enum Verdict {
 }
 
 pub(crate) struct Analyzer {
-    results: Vec<ConnectivityCheckResult>
+    results: Vec<Result<ConnectivityCheckResult>>
 }
 
 impl Analyzer {
-    pub(crate) fn new(results: Vec<ConnectivityCheckResult>) ->
+    pub(crate) fn new(results: Vec<Result<ConnectivityCheckResult>>) ->
      Self {
         Self {
             results
@@ -42,14 +43,20 @@ impl Analyzer {
         Verdict::Limited
     }
 
-    fn analyze_check(check: &ConnectivityCheckResult) -> Verdict {
-        if !check.dns_resolved {
+    fn analyze_check(check: &Result<ConnectivityCheckResult>) -> Verdict {
+        if check.is_err() {
+            return Verdict::Error;
+        }
+
+        let result = check.as_ref().unwrap();
+
+        if !result.dns_resolved {
             return Verdict::None
         }
-        if !check.get_succeeded {
+        if !result.get_succeeded {
             return Verdict::None
         }
-        if !check.content_matched {
+        if !result.content_matched {
             return Verdict::Limited
         }
 
@@ -62,16 +69,18 @@ mod tests {
     use std::net::{IpAddr, Ipv4Addr};
     use super::*;
 
+//TODO: Test error results
+
     #[test]
     fn single_check_with_all_result_failed_shall_return_verdict_none() {
         let results = vec![
-            ConnectivityCheckResult {
+            Ok(ConnectivityCheckResult {
                 uri: "test-uri".to_string(),
                 ip: Option::from(IpAddr:: V4(Ipv4Addr::LOCALHOST)),
                 dns_resolved: false,
                 get_succeeded: false,
                 content_matched: false
-            }
+            })
         ];
         let verdict = Analyzer::new(results).analyze();
         assert_eq!(verdict, Verdict::None);
@@ -80,13 +89,13 @@ mod tests {
     #[test]
     fn single_check_with_dns_resolved_failed_shall_return_verdict_none() {
         let results = vec![
-            ConnectivityCheckResult {
+            Ok(ConnectivityCheckResult {
                 uri: "test-uri".to_string(),
                 ip: Option::from(IpAddr:: V4(Ipv4Addr::LOCALHOST)),
                 dns_resolved: false,
                 get_succeeded: true,
                 content_matched: true
-            }
+            })
         ];
         let verdict = Analyzer::new(results).analyze();
         assert_eq!(verdict, Verdict::None);
@@ -95,13 +104,13 @@ mod tests {
     #[test]
     fn single_check_with_get_failed_shall_return_verdict_none() {
         let results = vec![
-            ConnectivityCheckResult {
+            Ok(ConnectivityCheckResult {
                 uri: "test-uri".to_string(),
                 ip: Option::from(IpAddr:: V4(Ipv4Addr::LOCALHOST)),
                 dns_resolved: true,
                 get_succeeded: false,
                 content_matched: true
-            }
+            })
         ];
         let verdict = Analyzer::new(results).analyze();
         assert_eq!(verdict, Verdict::None);
@@ -110,13 +119,13 @@ mod tests {
     #[test]
     fn single_check_with_content_failed_shall_return_verdict_limited() {
         let results = vec![
-            ConnectivityCheckResult {
+            Ok(ConnectivityCheckResult {
                 uri: "test-uri".to_string(),
                 ip: Option::from(IpAddr:: V4(Ipv4Addr::LOCALHOST)),
                 dns_resolved: true,
                 get_succeeded: true,
                 content_matched: false
-            }
+            })
         ];
         let verdict = Analyzer::new(results).analyze();
         assert_eq!(verdict, Verdict::Limited);
@@ -125,13 +134,13 @@ mod tests {
     #[test]
     fn single_check_with_all_passed_shall_return_verdict_full() {
         let results = vec![
-            ConnectivityCheckResult {
+            Ok(ConnectivityCheckResult {
                 uri: "test-uri".to_string(),
                 ip: Option::from(IpAddr:: V4(Ipv4Addr::LOCALHOST)),
                 dns_resolved: true,
                 get_succeeded: true,
                 content_matched: true
-            }
+            })
         ];
         let verdict = Analyzer::new(results).analyze();
         assert_eq!(verdict, Verdict::Full);
@@ -140,20 +149,20 @@ mod tests {
     #[test]
     fn multiple_checks_with_all_verdict_none_shall_return_aggregated_verdict_none() {
         let results = vec![
-            ConnectivityCheckResult {
+            Ok(ConnectivityCheckResult {
                 uri: "test-uri".to_string(),
                 ip: Option::from(IpAddr:: V4(Ipv4Addr::LOCALHOST)),
                 dns_resolved: false,
                 get_succeeded: false,
                 content_matched: false
-            },
-            ConnectivityCheckResult {
+            }),
+            Ok(ConnectivityCheckResult {
                 uri: "test-uri".to_string(),
                 ip: Option::from(IpAddr:: V4(Ipv4Addr::LOCALHOST)),
                 dns_resolved: false,
                 get_succeeded: false,
                 content_matched: false
-            }
+            })
         ];
         let verdict = Analyzer::new(results).analyze();
         assert_eq!(verdict, Verdict::None);
@@ -162,20 +171,20 @@ mod tests {
     #[test]
     fn multiple_checks_with_any_verdict_full_shall_return_aggregated_verdict_limited() {
         let results = vec![
-            ConnectivityCheckResult {
+            Ok(ConnectivityCheckResult {
                 uri: "test-uri".to_string(),
                 ip: Option::from(IpAddr:: V4(Ipv4Addr::LOCALHOST)),
                 dns_resolved: false,
                 get_succeeded: false,
                 content_matched: false
-            },
-            ConnectivityCheckResult {
+            }),
+            Ok(ConnectivityCheckResult {
                 uri: "test-uri".to_string(),
                 ip: Option::from(IpAddr:: V4(Ipv4Addr::LOCALHOST)),
                 dns_resolved: true,
                 get_succeeded: true,
                 content_matched: true
-            }
+            })
         ];
         let verdict = Analyzer::new(results).analyze();
         assert_eq!(verdict, Verdict::Limited);
@@ -184,20 +193,20 @@ mod tests {
     #[test]
     fn multiple_checks_with_all_verdict_full_shall_return_aggregated_verdict_full() {
         let results = vec![
-            ConnectivityCheckResult {
+            Ok(ConnectivityCheckResult {
                 uri: "test-uri".to_string(),
                 ip: Option::from(IpAddr:: V4(Ipv4Addr::LOCALHOST)),
                 dns_resolved: true,
                 get_succeeded: true,
                 content_matched: true
-            },
-            ConnectivityCheckResult {
+            }),
+            Ok(ConnectivityCheckResult {
                 uri: "test-uri".to_string(),
                 ip: Option::from(IpAddr:: V4(Ipv4Addr::LOCALHOST)),
                 dns_resolved: true,
                 get_succeeded: true,
                 content_matched: true
-            }
+            })
         ];
         let verdict = Analyzer::new(results).analyze();
         assert_eq!(verdict, Verdict::Full);

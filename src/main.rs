@@ -49,5 +49,4 @@ async fn main() -> ExitCode {
             ExitCode::from(codes::GENERAL_ERROR)
         }
     }
-
 }

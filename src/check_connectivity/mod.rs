@@ -18,7 +18,7 @@ pub async fn check_internet_connectivity(checks: Vec<Check>) -> Result<analysis:
         debug!("Executing check: {}", checks::get_name(&check));
         let start = Instant::now();
 
-        let result = execute_strategy(&check).await?;
+        let result = execute_strategy(&check).await;
         results.push(result);
 
         let duration = start.elapsed();
