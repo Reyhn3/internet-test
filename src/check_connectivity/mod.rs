@@ -3,7 +3,8 @@ pub(crate) mod analysis;
 mod strategy;
 
 use anyhow::Result;
-use log::debug;
+use log::{debug, trace};
+use tokio::time::Instant;
 use crate::check_connectivity::analysis::Analyzer;
 use crate::check_connectivity::checks::Check;
 use crate::check_connectivity::strategy::execute_strategy;
@@ -14,12 +15,14 @@ pub async fn check_internet_connectivity(checks: Vec<Check>) -> Result<analysis:
 
     for (index, check) in checks.into_iter().enumerate() {
         set_scope(index);
-//TODO: Log begin and end of check execution
-//        debug!("Executing check: {}", &check);
-        
+        debug!("Executing check: {}", checks::get_name(&check));
+        let start = Instant::now();
+
         let result = execute_strategy(&check).await?;
         results.push(result);
-        
+
+        let duration = start.elapsed();
+        trace!("Executed check: {} in {:?}", checks::get_name(&check), duration);
         clear_scope();
     }
 

@@ -1,4 +1,5 @@
 use std::net::IpAddr;
+use crate::probing;
 
 pub struct NmCheck {
 //TODO: Change to &str or Uri
@@ -18,7 +19,6 @@ pub struct NcsiCheck {
     pub dns_second_expected_ip: String
 }
 
-//TODO: Implement std::fmt::Display
 pub enum Check {
     Nm(NmCheck),
     Ncsi(NcsiCheck)
@@ -58,4 +58,11 @@ pub fn get_default_check_list() -> Vec<Check> {
             dns_second_expected_ip: String::from("131.107.255.255")
         })
     ]
+}
+
+pub(crate) fn get_name(check: &Check) -> String {
+    match check {
+        Check::Nm(c) => probing::fqdn(c.uri.as_str()).unwrap_or(String::from("unknown")),
+        Check::Ncsi(c) => probing::fqdn(c.web_uri.as_str()).unwrap_or(String::from("unknown"))
+    }
 }
