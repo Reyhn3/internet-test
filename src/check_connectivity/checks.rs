@@ -29,16 +29,22 @@ pub enum Check {
 
 #[derive(clap::ValueEnum, Clone, Debug, Default, PartialEq, Eq)]
 pub enum Strategy {
-    // The Linux NetworkManager strategy.
-    #[value(alias("linux"))]
-    /// The Linux NetworkManager strategy (alias: linux)
+    /// The Arch Linux strategy
+    Arch,
+
+    /// The Fedora strategy.
+    Fedora,
+
+    /// The NetworkManager strategy.
     Nm,
 
-    // The Microsoft connectivity strategy.
     #[default]
     #[value(alias("microsoft"))]
     /// The Microsoft connectivity strategy (alias: microsoft)
     Ncsi,
+
+    /// The Ubuntu strategy.
+    Ubuntu,
 
     /// Run all checks
     All
@@ -57,7 +63,7 @@ pub fn get_default_check_list() -> Vec<Check> {
         Check::Nm(NmCheck {
             uri: String::from("https://ping.archlinux.org/"),
             expected_response: Some(String::from("This domain is used for connectivity checking"))
-        }, Strategy::Nm),
+        }, Strategy::Arch),
         Check::Nm(NmCheck {
             uri: String::from("http://nmcheck.gnome.org/check_network_status.txt"),
             expected_response: Some(String::from("NetworkManager is online"))
@@ -65,11 +71,11 @@ pub fn get_default_check_list() -> Vec<Check> {
         Check::Nm(NmCheck {
             uri: String::from("https://fedoraproject.org/static/hotspot.txt"),
             expected_response: Some(String::from("OK"))
-        }, Strategy::Nm),
+        }, Strategy::Fedora),
         Check::Nm(NmCheck {
             uri: String::from("http://connectivity-check.ubuntu.com/"),
             expected_response: None
-        }, Strategy::Nm),
+        }, Strategy::Ubuntu),
         Check::Ncsi(NcsiCheck {
             dns_first_host: String::from("www.msftconnecttest.com:80"),
             web_uri: String::from("http://www.msftconnecttest.com/connecttest.txt"),
