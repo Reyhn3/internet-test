@@ -2,12 +2,18 @@ use anstyle::{AnsiColor, Color, Style};
 use clap::{builder, Parser};
 use std::fmt::Debug;
 
+use crate::check_connectivity::checks::Strategy;
+
 /// Checks whether there is a working Internet connection.
 #[derive(Parser, Debug)]
 #[clap(author, version, about, long_about = None)]
 #[command(styles=get_styles())]
 pub struct Args {
-//TODO: Remove when done learning
+    /// Strategy to use for the connectivity check.
+    #[clap(long, short, value_enum,
+        default_value_t = Strategy::Ncsi)]
+    pub(crate) strategy: Strategy,
+
     /// Enable debug logs to the terminal.
     #[clap(long, short, action, hide(true))]
     pub(crate) debug: bool,

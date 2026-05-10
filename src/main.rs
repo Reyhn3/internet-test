@@ -21,8 +21,14 @@ async fn main() -> ExitCode {
 //TODO: Remove when done learning
     let debug = args.debug;
     logging::log_debug(debug);
+    
+    let strategy = args.strategy;
+    let checks = match strategy {
+        check_connectivity::checks::Strategy::Nm => check_connectivity::checks::get_nm_check_list(),
+        check_connectivity::checks::Strategy::Ncsi => check_connectivity::checks::get_ncsi_check_list(),
+        check_connectivity::checks::Strategy::All => check_connectivity::checks::get_default_check_list(),
+    };
 
-    let checks = check_connectivity::checks::get_default_check_list();
     let result = check_connectivity::check_internet_connectivity(checks);
 
     match result.await {
