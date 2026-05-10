@@ -5,8 +5,9 @@ mod check_connectivity;
 
 pub(crate) mod codes;
 
+use std::fmt::Debug;
 use clap::Parser;
-use log::{error, info, warn};
+use log::{debug, error, info, warn};
 use std::process::ExitCode;
 use crate::check_connectivity::analysis::{Verdict};
 
@@ -23,11 +24,21 @@ async fn main() -> ExitCode {
     logging::log_debug(debug);
     
     let strategy = args.strategy;
-    let checks = match strategy {
-        check_connectivity::checks::Strategy::Nm => check_connectivity::checks::get_nm_check_list(),
-        check_connectivity::checks::Strategy::Ncsi => check_connectivity::checks::get_ncsi_check_list(),
-        check_connectivity::checks::Strategy::All => check_connectivity::checks::get_default_check_list(),
-    };
+    let checks: Vec<_> = check_connectivity::checks::get_default_check_list()
+        .into_iter()
+        .filter(|check| {
+            let check_strategy = check_connectivity::checks::get_strategy(check);
+            match strategy {
+                check_connectivity::checks::Strategy::All => true,
+                _ => strategy == *check_strategy,
+            }
+        })
+        .collect();
+    debug!("Filtered checks: {:?}",
+        checks
+        .iter()
+        .map(|c| check_connectivity::checks::get_strategy(c))
+        .collect::<Vec<_>>());
 
     let result = check_connectivity::check_internet_connectivity(checks);
 

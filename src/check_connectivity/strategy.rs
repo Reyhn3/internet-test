@@ -13,11 +13,11 @@ pub(crate) trait Strategy {
 
 pub(crate) async fn execute_strategy(check: &Check) -> Result<ConnectivityCheckResult> {
     match check {
-        Check::Nm(nm_check) => {
+        Check::Nm(nm_check, _) => {
             let strategy = NmStrategy::new(nm_check);
             strategy.execute().await
         }
-        Check::Ncsi(ncsi_check) => {
+        Check::Ncsi(ncsi_check, _) => {
             let strategy = NcsiStrategy::new(ncsi_check);
             strategy.execute().await
         }
