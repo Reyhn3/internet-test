@@ -12,9 +12,13 @@ use crate::logging::{clear_scope, set_scope};
 
 pub async fn check_internet_connectivity(checks: Vec<Check>) -> Result<analysis::Verdict> {
     let mut results = Vec::new();
+    let scoped = checks.len() > 1;
 
     for (index, check) in checks.into_iter().enumerate() {
-        set_scope(index);
+        if scoped {
+            set_scope(index);
+        }
+
         debug!("Executing check: {}", checks::get_name(&check));
         let start = Instant::now();
 
@@ -23,7 +27,10 @@ pub async fn check_internet_connectivity(checks: Vec<Check>) -> Result<analysis:
 
         let duration = start.elapsed();
         trace!("Executed check: {} in {:?}", checks::get_name(&check), duration);
-        clear_scope();
+
+        if scoped {
+            clear_scope();
+        }
     }
 
     let analyzer = Analyzer::new(results);
