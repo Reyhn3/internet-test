@@ -1,3 +1,4 @@
+use std::cell::RefCell;
 use anstream::println;
 use anstyle::{Ansi256Color, Color, Style};
 use chrono::Local;
@@ -10,6 +11,24 @@ static TIMESTAMP_STYLE: Style = Style::new()
 static LEVEL_STYLE: Style = Style::new()
     .bg_color(Some(Color::Ansi(White)))
     .fg_color(Some(Color::Ansi(Black)));
+static SCOPE_STYLE: Style = Style::new()
+    .fg_color(Some(Color::Ansi256(Ansi256Color(242))));
+
+thread_local! {
+    static SCOPE_ID: RefCell<Option<usize>> = RefCell::new(None);
+}
+
+pub fn set_scope(id: usize) {
+    SCOPE_ID.with(|scope| {
+        *scope.borrow_mut() = Some(id);
+    });
+}
+
+pub fn clear_scope() {
+    SCOPE_ID.with(|scope| {
+        *scope.borrow_mut() = None;
+    });
+}
 
 pub fn init(quiet: bool, verbose: bool) {
     if quiet {
@@ -37,11 +56,17 @@ pub fn init(quiet: bool, verbose: bool) {
             let timestamp = Local::now().format(DATE_FORMAT_STR);
             let pad = match record.level() {
                 Level::Info | Level::Warn => "  ",
-                _ => " ",
+                _ => " "
+            };
+
+            let scope = SCOPE_ID.with(|s| *s.borrow());
+            let scope_prefix = match scope {
+                Some(id) => format!("[{}] ", id),
+                None => "".to_string()
             };
 
             println!(
-                "{TIMESTAMP_STYLE}{timestamp}{TIMESTAMP_STYLE:#} {LEVEL_STYLE}{}{LEVEL_STYLE:#}{pad}{style}{}{style:#}",
+                "{TIMESTAMP_STYLE}{timestamp}{TIMESTAMP_STYLE:#} {LEVEL_STYLE}{}{LEVEL_STYLE:#}{pad}{SCOPE_STYLE}{scope_prefix}{SCOPE_STYLE:#}{style}{}{style:#}",
                 record.level(),
                 record.args()
             );

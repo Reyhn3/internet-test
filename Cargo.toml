@@ -1,14 +1,14 @@
 [package]
-name = "internet_test"
+name = "check_internet_connectivity"
 version = "0.1.0"
 edition = "2024"
 
 [[bin]]
-name = "it"
+name = "cic"
 path = "src/main.rs"
 
 [dependencies]
-anstream = "0.6.21"
+anstream = "1.0.0"
 anstyle = "1.0.14"
 anyhow = "1.0.102"
 chrono = "0.4.44"

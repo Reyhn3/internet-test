@@ -1,0 +1,92 @@
+use anyhow::Result;
+use log::{debug, error, trace};
+
+use crate::check_connectivity::checks::{Check, ConnectivityCheckResult, NmCheck, NcsiCheck};
+use crate::check_connectivity::strategy::Strategy;
+use crate::probing;
+
+pub(crate) struct NcsiStrategy<'a> {
+    check: &'a NcsiCheck,
+}
+
+impl<'a> NcsiStrategy<'a> {
+    pub fn new(check: &'a NcsiCheck) -> Self {
+        Self { check }
+    }
+}
+
+impl<'a> Strategy for NcsiStrategy<'a> {
+    async fn execute(&self) -> Result<ConnectivityCheckResult> {
+        let mut result = ConnectivityCheckResult {
+            uri: self.check.web_uri.clone(),
+            dns_resolved: false,
+            get_succeeded: false,
+            content_matched: false,
+            ip: None,
+        };
+
+        trace!("DNS resolution of web host started");
+        match probing::resolve_dns(self.check.dns_first_host.as_str()) {
+            Ok(ip) => {
+                debug!("DNS resolution of web host succeeded: {}", ip);
+                result.dns_resolved = true;
+                result.ip = Some(ip);
+            }
+            Err(e) => {
+                error!("DNS resolution of web host failed: {}", e);
+                return Ok(result);
+            }
+        };
+
+        trace!("NCSI Web request started");
+        let content = match probing::request_web_content(self.check.web_uri.as_str()).await {
+            Ok(c) => {
+                debug!("NCSI Web request succeeded");
+                result.get_succeeded = true;
+                c
+            }
+            Err(e) => {
+                error!("NCSI Web request failed: {}", e);
+                return Ok(result);
+            }
+        };
+
+        trace!("NCSI Checking content match");
+        if content.is_none() {
+            error!("NCSI content was expected but is missing");
+            return Ok(result);
+        } else {
+            if let Some(actual) = content && actual.starts_with(&self.check.web_expected_response) {
+                debug!("NCSI content matched");
+                result.content_matched = true;
+            } else {
+                debug!("NCSI content did NOT match");
+                result.content_matched = false;
+                // In NCSI, if web content doesn't match, it might be limited connectivity.
+                // But for ConnectivityCheckResult, we just report what happened.
+                return Ok(result);
+            }
+        }
+
+        trace!("NCSI DNS resolution of DNS host started");
+        match probing::resolve_dns(self.check.dns_second_host.as_str()) {
+            Ok(dns_ip) => {
+                debug!("NCSI DNS resolution of DNS host succeeded and found IP {}", dns_ip);
+                if dns_ip.eq(&self.check.dns_second_expected_ip) {
+                    debug!("NCSI DNS IP matches expected IP");
+                } else {
+                    debug!("NCSI DNS IP does not match expected IP");
+                    // We don't have a specific field for this in ConnectivityCheckResult yet,
+                    // but we could say it failed if we want to be strict.
+                    // For now, let's keep it as is.
+                }
+            }
+            Err(e) => {
+                error!("NCSI DNS resolution of DNS host failed: {}", e);
+                // Should we fail the whole check?
+            }
+        }
+
+        Ok(result)
+    }
+}
