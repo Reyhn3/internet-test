@@ -19,14 +19,14 @@ pub async fn check_internet_connectivity(checks: Vec<Check>) -> Result<analysis:
             set_scope(index);
         }
 
-        debug!("Executing check: {}", checks::get_name(&check));
+        debug!("Beginning checking target {}", checks::get_name(&check));
         let start = Instant::now();
 
         let result = execute_strategy(&check).await;
         results.push(result);
 
         let duration = start.elapsed();
-        trace!("Executed check: {} in {:?}", checks::get_name(&check), duration);
+        debug!("Finished checking target {} in {:?}", checks::get_name(&check), duration);
 
         if scoped {
             clear_scope();

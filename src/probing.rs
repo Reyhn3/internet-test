@@ -19,7 +19,7 @@ pub(crate) fn resolve_dns(url: &str) -> Result<IpAddr> {
 pub(crate) async fn request_web_content(url: &str) -> Result<Option<String>> {
     trace!("Invoking GET request to {}", url);
     let mut response = reqwest::get(url).await?;
-    debug!("Received response {}", response.status());
+    trace!("Received response {}", response.status());
 
     if response.status() != StatusCode::OK && response.status() != StatusCode::NO_CONTENT {
         return Err(anyhow!("Received NOK status code {}", response.status()));
