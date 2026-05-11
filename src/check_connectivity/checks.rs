@@ -23,30 +23,30 @@ pub struct NcsiCheck {
 
 #[derive(Debug)]
 pub enum Check {
-    Nm(NmCheck, Strategy),
-    Ncsi(NcsiCheck, Strategy)
+    Nm(NmCheck, Target),
+    Ncsi(NcsiCheck, Target)
 }
 
 #[derive(clap::ValueEnum, Clone, Debug, Default, PartialEq, Eq)]
-pub enum Strategy {
-    /// The Arch Linux strategy
+pub enum Target {
+    /// The Arch Linux connectivity target.
     Arch,
 
-    /// The Fedora strategy.
+    /// The Fedora connectivity target.
     Fedora,
 
-    /// The NetworkManager strategy.
+    /// The NetworkManager connectivity target.
     Nm,
 
     #[default]
     #[value(alias("microsoft"))]
-    /// The Microsoft connectivity strategy (alias: microsoft)
+    /// The Microsoft connectivity target (alias: microsoft)
     Ncsi,
 
-    /// The Ubuntu strategy.
+    /// The Ubuntu connectivity target.
     Ubuntu,
 
-    /// Run all checks
+    /// Check all targets.
     All
 }
 
@@ -58,35 +58,35 @@ pub struct ConnectivityCheckResult {
     pub ip: Option<IpAddr>
 }
 
-pub fn get_default_check_list() -> Vec<Check> {
+pub fn get_default_targets() -> Vec<Check> {
     vec![
         Check::Nm(NmCheck {
             uri: String::from("https://ping.archlinux.org/"),
             expected_response: Some(String::from("This domain is used for connectivity checking"))
-        }, Strategy::Arch),
+        }, Target::Arch),
         Check::Nm(NmCheck {
             uri: String::from("http://nmcheck.gnome.org/check_network_status.txt"),
             expected_response: Some(String::from("NetworkManager is online"))
-        }, Strategy::Nm),
+        }, Target::Nm),
         Check::Nm(NmCheck {
             uri: String::from("https://fedoraproject.org/static/hotspot.txt"),
             expected_response: Some(String::from("OK"))
-        }, Strategy::Fedora),
+        }, Target::Fedora),
         Check::Nm(NmCheck {
             uri: String::from("http://connectivity-check.ubuntu.com/"),
             expected_response: None
-        }, Strategy::Ubuntu),
+        }, Target::Ubuntu),
         Check::Ncsi(NcsiCheck {
             dns_first_host: String::from("www.msftconnecttest.com:80"),
             web_uri: String::from("http://www.msftconnecttest.com/connecttest.txt"),
             web_expected_response: String::from("Microsoft Connect Test"),
             dns_second_host: String::from("dns.msftncsi.com:80"),
             dns_second_expected_ip: String::from("131.107.255.255")
-        }, Strategy::Ncsi)
+        }, Target::Ncsi)
     ]
 }
 
-pub(crate) fn get_strategy(check: &Check) -> &Strategy {
+pub(crate) fn get_target(check: &Check) -> &Target {
     match check {
         Check::Nm(_, s) => s,
         Check::Ncsi(_, s) => s

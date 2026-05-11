@@ -23,13 +23,13 @@ async fn main() -> ExitCode {
     let debug = args.debug;
     logging::log_debug(debug);
     
-    let strategy = args.strategy;
-    let checks: Vec<_> = check_connectivity::checks::get_default_check_list()
+    let strategy = args.target;
+    let checks: Vec<_> = check_connectivity::checks::get_default_targets()
         .into_iter()
         .filter(|check| {
-            let check_strategy = check_connectivity::checks::get_strategy(check);
+            let check_strategy = check_connectivity::checks::get_target(check);
             match strategy {
-                check_connectivity::checks::Strategy::All => true,
+                check_connectivity::checks::Target::All => true,
                 _ => strategy == *check_strategy,
             }
         })
@@ -37,7 +37,7 @@ async fn main() -> ExitCode {
     debug!("Filtered checks: {:?}",
         checks
         .iter()
-        .map(|c| check_connectivity::checks::get_strategy(c))
+        .map(|c| check_connectivity::checks::get_target(c))
         .collect::<Vec<_>>());
 
     let result = check_connectivity::check_internet_connectivity(checks);
