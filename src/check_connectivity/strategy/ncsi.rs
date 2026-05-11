@@ -72,7 +72,7 @@ impl<'a> Strategy for NcsiStrategy<'a> {
         match probing::resolve_dns(self.check.dns_second_host.as_str()) {
             Ok(dns_ip) => {
                 debug!("NCSI DNS resolution of DNS host succeeded and found IP {}", dns_ip);
-                if dns_ip.to_string().eq(&self.check.dns_second_expected_ip) {
+                if dns_ip.eq(&self.check.dns_second_expected_ip) {
                     debug!("NCSI DNS IP matches expected IP");
                 } else {
                     debug!("NCSI DNS IP does not match expected IP");

@@ -1,24 +1,19 @@
-use std::net::IpAddr;
+use std::net::{IpAddr, Ipv4Addr};
 use crate::probing;
 
 #[derive(Debug)]
 pub struct NmCheck {
-//TODO: Change to &str or Uri
     pub uri: String,
     pub expected_response: Option<String>
 }
 
 #[derive(Debug)]
 pub struct NcsiCheck {
-//TODO: Change to &str or Uri
     pub dns_first_host: String,
-//TODO: Change to &str or Uri
     pub web_uri: String,
     pub web_expected_response: String,
-//TODO: Change to &str or Uri
     pub dns_second_host: String,
-//TODO: Change to IpAddr
-    pub dns_second_expected_ip: String
+    pub dns_second_expected_ip: IpAddr
 }
 
 #[derive(Debug)]
@@ -81,7 +76,7 @@ pub fn get_default_targets() -> Vec<Check> {
             web_uri: String::from("http://www.msftconnecttest.com/connecttest.txt"),
             web_expected_response: String::from("Microsoft Connect Test"),
             dns_second_host: String::from("dns.msftncsi.com:80"),
-            dns_second_expected_ip: String::from("131.107.255.255")
+            dns_second_expected_ip: IpAddr::from(Ipv4Addr::new(131, 107, 255, 255))
         }, Target::Ncsi)
     ]
 }
