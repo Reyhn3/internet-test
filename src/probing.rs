@@ -1,7 +1,7 @@
 use anyhow::{anyhow, Context, Result};
 use log::{debug, warn};
 use log::trace;
-use reqwest::StatusCode;
+use reqwest::{Response, StatusCode};
 use std::net::{IpAddr, ToSocketAddrs};
 
 pub(crate) fn resolve_dns(url: &str) -> Result<IpAddr> {
@@ -18,27 +18,43 @@ pub(crate) fn resolve_dns(url: &str) -> Result<IpAddr> {
 
 pub(crate) async fn request_web_content(url: &str) -> Result<Option<String>> {
     trace!("Invoking GET request to {}", url);
-    let result = reqwest::get(url).await?;
-    debug!("Received response {}", result.status());
+    let mut response = reqwest::get(url).await?;
+    debug!("Received response {}", response.status());
 
-    if result.status() != StatusCode::OK && result.status() != StatusCode::NO_CONTENT {
-        return Err(anyhow!("Received NOK status code {}", result.status()));
+    if response.status() != StatusCode::OK && response.status() != StatusCode::NO_CONTENT {
+        return Err(anyhow!("Received NOK status code {}", response.status()));
     }
 
-    if result.status() == StatusCode::NO_CONTENT {
+    if response.status() == StatusCode::NO_CONTENT {
         trace!("Received NO_CONTENT status code, returning empty string");
         return Ok(None);
     }
 
-    let content = result.text().await?;
+    let content = download_leading_body(&mut response).await?;
     if content.is_empty() {
         warn!("Received empty content body");
         return Err(anyhow!("Web request body was empty"));
     }
 
-//TODO: Get only the first 50 chars (if more)
     trace!("Received content '{}'", content);
     Ok(Some(content))
+}
+
+async fn download_leading_body(response: &mut Response) -> Result<String> {
+    let mut content = String::new();
+    while let Some(chunk) = response.chunk().await? {
+        let chunk_str = String::from_utf8_lossy(&chunk);
+        for c in chunk_str.chars() {
+            content.push(c);
+            if content.chars().count() >= 50 {
+                break;
+            }
+        }
+        if content.chars().count() >= 50 {
+            break;
+        }
+    }
+    Ok(content)
 }
 
 pub(crate) fn fqdn(input: &str) -> Result<String> {
