@@ -30,6 +30,10 @@ impl Analyzer {
             .map(|r| Self::analyze_check(r))
             .collect::<Vec<Verdict>>();
 
+        if verdicts.iter().any(|v| v == &Verdict::Error) {
+            return Verdict::Error;
+        }
+
         let all_are_full = verdicts.iter().all(|v| v == &Verdict::Full);
         if all_are_full {
             return Verdict::Full;
@@ -69,7 +73,21 @@ mod tests {
     use std::net::{IpAddr, Ipv4Addr};
     use super::*;
 
-//TODO: Test error results
+    #[test]
+    fn empty_results_shall_return_verdict_error() {
+        let results = vec![];
+        let verdict = Analyzer::new(results).analyze();
+        assert_eq!(verdict, Verdict::Error);
+    }
+
+    #[test]
+    fn single_check_with_result_error_shall_return_verdict_error() {
+        let results = vec![
+            Err(anyhow::anyhow!("error")),
+        ];
+        let verdict = Analyzer::new(results).analyze();
+        assert_eq!(verdict, Verdict::Error);
+    }
 
     #[test]
     fn single_check_with_all_result_failed_shall_return_verdict_none() {

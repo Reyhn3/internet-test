@@ -56,13 +56,13 @@ pub fn init(quiet: bool, verbose: bool) {
             let timestamp = Local::now().format(DATE_FORMAT_STR);
             let pad = match record.level() {
                 Level::Info | Level::Warn => "  ",
-                _ => " ",
+                _ => " "
             };
 
             let scope = SCOPE_ID.with(|s| *s.borrow());
             let scope_prefix = match scope {
                 Some(id) => format!("[{}] ", id),
-                None => "".to_string(),
+                None => "".to_string()
             };
 
             println!(

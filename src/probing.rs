@@ -43,7 +43,7 @@ pub(crate) async fn request_web_content(url: &str) -> Result<Option<String>> {
 
 pub(crate) fn fqdn(input: &str) -> Result<String> {
     let url = reqwest::Url::parse(input)
-        .with_context(|| format!("invalid URL: {input}"))?;
+        .with_context(|| format!("Invalid URL: {input}"))?;
 
     let host = url
         .host_str()

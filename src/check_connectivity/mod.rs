@@ -36,22 +36,3 @@ pub async fn check_internet_connectivity(checks: Vec<Check>) -> Result<analysis:
     let analyzer = Analyzer::new(results);
     Ok(analyzer.analyze())
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::check_connectivity::checks::{NmCheck, Target};
-
-//TODO: Refactor this test to actually test something
-    #[tokio::test]
-    async fn test_connectivity_check() {
-        let checks = vec![
-            Check::Nm(NmCheck {
-                uri: "http://example.com".to_string(),
-                expected_response: Option::from("OK".to_string())
-            }, Target::Nm),
-        ];
-        let result = check_internet_connectivity(checks).await.unwrap();
-        assert_eq!(result, analysis::Verdict::None);
-    }
-}
