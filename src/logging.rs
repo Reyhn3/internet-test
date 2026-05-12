@@ -76,28 +76,3 @@ pub fn init(quiet: bool, verbose: bool) {
         .format_target(false)
         .init();
 }
-
-//TODO: Remove when done learning
-pub fn log_debug(debug: bool) {
-    if !cfg!(debug_assertions) {
-        return;
-    }
-
-    if !debug {
-        return;
-    }
-
-    error!("{}", "Its fleece was white as snow");
-    warn!("{:#?}", "The lamb was sure to go");
-    info!("{:?}", "And every where that Mary went");
-    debug!("Mary has a little lamb");
-    trace!("Mary has a fluffy lamb");
-
-    debug!("this is a debug {}", "message");
-    error!("this is printed by default");
-
-    if log_enabled!(Level::Info) {
-        let x = 3 * 4; // expensive computation
-        info!("the answer was: {}", x);
-    }
-}

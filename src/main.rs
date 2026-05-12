@@ -19,10 +19,6 @@ async fn main() -> ExitCode {
 
     logging::init(quiet, verbose);
 
-//TODO: Remove when done learning
-    let debug = args.debug;
-    logging::log_debug(debug);
-    
     let strategy = args.target;
     let checks: Vec<_> = check_connectivity::checks::get_default_targets()
         .into_iter()
