@@ -13,10 +13,6 @@ pub struct Args {
     #[clap(long, short, value_enum, default_value_t = Target::Ncsi)]
     pub(crate) target: Target,
 
-    /// Enable debug logs to the terminal.
-    #[clap(long, short, action, hide(true))]
-    pub(crate) debug: bool,
-
     /// Disable all output to the terminal.
     #[clap(long, short, action)]
     pub(crate) quiet: bool,

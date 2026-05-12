@@ -1,7 +1,7 @@
 use anyhow::Result;
 use log::{debug, error, trace, warn};
 
-use crate::check_connectivity::checks::{Check, ConnectivityCheckResult, NmCheck, NcsiCheck};
+use crate::check_connectivity::checks::{ConnectivityCheckResult, NmCheck};
 use crate::check_connectivity::strategy::Strategy;
 use crate::probing;
 
@@ -20,11 +20,10 @@ impl<'a> Strategy for NmStrategy<'a> {
         let dns_uri = probing::fqdn_with_port80(self.check.uri.as_str())?;
 
         let mut result = ConnectivityCheckResult {
-            uri: self.check.uri.clone(),
             dns_resolved: false,
             get_succeeded: false,
             content_matched: false,
-            ip: None,
+            ip: None
         };
 
         trace!("DNS resolution of web host started");

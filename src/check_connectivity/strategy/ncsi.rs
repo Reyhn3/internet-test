@@ -1,7 +1,7 @@
 use anyhow::Result;
 use log::{debug, error, trace};
 
-use crate::check_connectivity::checks::{Check, ConnectivityCheckResult, NmCheck, NcsiCheck};
+use crate::check_connectivity::checks::{ConnectivityCheckResult, NcsiCheck};
 use crate::check_connectivity::strategy::Strategy;
 use crate::probing;
 
@@ -18,11 +18,10 @@ impl<'a> NcsiStrategy<'a> {
 impl<'a> Strategy for NcsiStrategy<'a> {
     async fn execute(&self) -> Result<ConnectivityCheckResult> {
         let mut result = ConnectivityCheckResult {
-            uri: self.check.web_uri.clone(),
             dns_resolved: false,
             get_succeeded: false,
             content_matched: false,
-            ip: None,
+            ip: None
         };
 
         trace!("DNS resolution of web host started");

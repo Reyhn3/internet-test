@@ -1,5 +1,5 @@
 use anyhow::{anyhow, Context, Result};
-use log::{debug, warn};
+use log::warn;
 use log::trace;
 use reqwest::{Response, StatusCode};
 use std::net::{IpAddr, ToSocketAddrs};

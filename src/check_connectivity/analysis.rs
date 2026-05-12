@@ -93,7 +93,6 @@ mod tests {
     fn single_check_with_all_result_failed_shall_return_verdict_none() {
         let results = vec![
             Ok(ConnectivityCheckResult {
-                uri: "test-uri".to_string(),
                 ip: Option::from(IpAddr:: V4(Ipv4Addr::LOCALHOST)),
                 dns_resolved: false,
                 get_succeeded: false,
@@ -108,7 +107,6 @@ mod tests {
     fn single_check_with_dns_resolved_failed_shall_return_verdict_none() {
         let results = vec![
             Ok(ConnectivityCheckResult {
-                uri: "test-uri".to_string(),
                 ip: Option::from(IpAddr:: V4(Ipv4Addr::LOCALHOST)),
                 dns_resolved: false,
                 get_succeeded: true,
@@ -123,7 +121,6 @@ mod tests {
     fn single_check_with_get_failed_shall_return_verdict_none() {
         let results = vec![
             Ok(ConnectivityCheckResult {
-                uri: "test-uri".to_string(),
                 ip: Option::from(IpAddr:: V4(Ipv4Addr::LOCALHOST)),
                 dns_resolved: true,
                 get_succeeded: false,
@@ -138,7 +135,6 @@ mod tests {
     fn single_check_with_content_failed_shall_return_verdict_limited() {
         let results = vec![
             Ok(ConnectivityCheckResult {
-                uri: "test-uri".to_string(),
                 ip: Option::from(IpAddr:: V4(Ipv4Addr::LOCALHOST)),
                 dns_resolved: true,
                 get_succeeded: true,
@@ -153,7 +149,6 @@ mod tests {
     fn single_check_with_all_passed_shall_return_verdict_full() {
         let results = vec![
             Ok(ConnectivityCheckResult {
-                uri: "test-uri".to_string(),
                 ip: Option::from(IpAddr:: V4(Ipv4Addr::LOCALHOST)),
                 dns_resolved: true,
                 get_succeeded: true,
@@ -168,14 +163,12 @@ mod tests {
     fn multiple_checks_with_all_verdict_none_shall_return_aggregated_verdict_none() {
         let results = vec![
             Ok(ConnectivityCheckResult {
-                uri: "test-uri".to_string(),
                 ip: Option::from(IpAddr:: V4(Ipv4Addr::LOCALHOST)),
                 dns_resolved: false,
                 get_succeeded: false,
                 content_matched: false
             }),
             Ok(ConnectivityCheckResult {
-                uri: "test-uri".to_string(),
                 ip: Option::from(IpAddr:: V4(Ipv4Addr::LOCALHOST)),
                 dns_resolved: false,
                 get_succeeded: false,
@@ -190,14 +183,12 @@ mod tests {
     fn multiple_checks_with_any_verdict_full_shall_return_aggregated_verdict_limited() {
         let results = vec![
             Ok(ConnectivityCheckResult {
-                uri: "test-uri".to_string(),
                 ip: Option::from(IpAddr:: V4(Ipv4Addr::LOCALHOST)),
                 dns_resolved: false,
                 get_succeeded: false,
                 content_matched: false
             }),
             Ok(ConnectivityCheckResult {
-                uri: "test-uri".to_string(),
                 ip: Option::from(IpAddr:: V4(Ipv4Addr::LOCALHOST)),
                 dns_resolved: true,
                 get_succeeded: true,
@@ -212,14 +203,12 @@ mod tests {
     fn multiple_checks_with_all_verdict_full_shall_return_aggregated_verdict_full() {
         let results = vec![
             Ok(ConnectivityCheckResult {
-                uri: "test-uri".to_string(),
                 ip: Option::from(IpAddr:: V4(Ipv4Addr::LOCALHOST)),
                 dns_resolved: true,
                 get_succeeded: true,
                 content_matched: true
             }),
             Ok(ConnectivityCheckResult {
-                uri: "test-uri".to_string(),
                 ip: Option::from(IpAddr:: V4(Ipv4Addr::LOCALHOST)),
                 dns_resolved: true,
                 get_succeeded: true,

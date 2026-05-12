@@ -5,7 +5,6 @@ mod check_connectivity;
 
 pub(crate) mod codes;
 
-use std::fmt::Debug;
 use clap::Parser;
 use log::{debug, error, info, warn};
 use std::process::ExitCode;
@@ -19,10 +18,6 @@ async fn main() -> ExitCode {
 
     logging::init(quiet, verbose);
 
-//TODO: Remove when done learning
-    let debug = args.debug;
-    logging::log_debug(debug);
-    
     let strategy = args.target;
     let checks: Vec<_> = check_connectivity::checks::get_default_targets()
         .into_iter()
@@ -46,7 +41,7 @@ async fn main() -> ExitCode {
         Ok(result) => match result {
             Verdict::Error => {
                 error!("An error occurred");
-                ExitCode::from(codes::GENERAL_ERROR)
+                ExitCode::from(codes::INTERNET_ACCESS_ERROR)
             },
             Verdict::None => {
                 error!("No working Internet connection detected");
