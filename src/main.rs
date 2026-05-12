@@ -46,7 +46,7 @@ async fn main() -> ExitCode {
         Ok(result) => match result {
             Verdict::Error => {
                 error!("An error occurred");
-                ExitCode::from(codes::GENERAL_ERROR)
+                ExitCode::from(codes::INTERNET_ACCESS_ERROR)
             },
             Verdict::None => {
                 error!("No working Internet connection detected");
