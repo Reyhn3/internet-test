@@ -3,7 +3,7 @@ pub(crate) mod analysis;
 mod strategy;
 
 use anyhow::Result;
-use log::{debug, trace};
+use log::debug;
 use tokio::time::Instant;
 use crate::check_connectivity::analysis::Analyzer;
 use crate::check_connectivity::checks::Check;

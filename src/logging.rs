@@ -2,7 +2,7 @@ use std::cell::RefCell;
 use anstream::println;
 use anstyle::{Ansi256Color, Color, Style};
 use chrono::Local;
-use log::{debug, error, info, log_enabled, trace, warn, Level, LevelFilter};
+use log::{Level, LevelFilter};
 use anstyle::AnsiColor::{Black, White};
 
 const DATE_FORMAT_STR: &'static str = "%H:%M:%S.%f";

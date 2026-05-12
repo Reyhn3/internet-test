@@ -5,7 +5,6 @@ mod check_connectivity;
 
 pub(crate) mod codes;
 
-use std::fmt::Debug;
 use clap::Parser;
 use log::{debug, error, info, warn};
 use std::process::ExitCode;

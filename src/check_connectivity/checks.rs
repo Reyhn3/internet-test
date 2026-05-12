@@ -46,7 +46,6 @@ pub enum Target {
 }
 
 pub struct ConnectivityCheckResult {
-    pub uri: String,
     pub dns_resolved: bool,
     pub get_succeeded: bool,
     pub content_matched: bool,
